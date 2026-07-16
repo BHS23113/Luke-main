@@ -1,0 +1,6 @@
+/.vscode
+/.vs
+/bin
+.env
+*.db
+*.exe
