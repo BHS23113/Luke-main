@@ -2,6 +2,9 @@ from flask import Flask, render_template, request, jsonify, session, redirect, u
 from google.oauth2 import id_token
 from google.auth.transport import requests as grequests
 import sqlite3
+import os
+from dotenv import load_dotenv
+load_dotenv(override=True)
 
 DATABASE = "prefectconnect.db"
 
@@ -11,9 +14,8 @@ def get_db():
     return conn
 
 app = Flask(__name__)
-app.secret_key = "super_secret_key"  
-
-GOOGLE_CLIENT_ID = "689612344288-p5f54jmflbfeh3f12p0o4bpmns3t9k8f.apps.googleusercontent.com"
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
+GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 
 
 @app.route("/")
