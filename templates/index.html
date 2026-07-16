@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prefects BHS</title>
+
+    <!-- Google Sign In -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <header class="navbar">
+        <h1 class="logo">PREFECTS BHS</h1>
+        <a href="#" class="nav-login">LOG IN</a>
+    </header>
+
+    <!-- MAIN LOGIN CARD -->
+    <main class="main-container">
+
+        <div class="login-card">
+
+            <h2>LOG IN</h2>
+
+            {% if user %}
+
+                <div class="user-info">
+
+                    <img src="{{ user.picture }}" width="100">
+
+                    <p>Welcome {{ user['name'] }}</p><br>
+
+                    <a href="/logout" class="logout-btn">
+                        Logout
+                    </a>
+
+                </div>
+
+            {% else %}
+
+                <!-- Google Login Setup -->
+                <div id="g_id_onload"
+                    data-client_id="689612344288-p5f54jmflbfeh3f12p0o4bpmns3t9k8f.apps.googleusercontent.com"
+                    data-callback="handleCredentialResponse">
+                </div>
+
+                <!-- Google Login Button -->
+                <div class="google-btn-wrapper">
+
+                    <div class="g_id_signin"
+                        data-type="standard"
+                        data-theme="filled_blue"
+                        data-size="large"
+                        data-text="signin_with"
+                        data-shape="rectangular"
+                        data-width="300">
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </main>
+
+    <!-- JS -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+</html>

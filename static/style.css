@@ -1,0 +1,98 @@
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* BODY */
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #ececec;
+    color: white;
+    min-height: 100vh;
+}
+
+/* NAVBAR */
+.navbar {
+    background-color: #003d52;
+    height: 100px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 0 50px;
+}
+
+.logo {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.nav-login {
+    color: white;
+    text-decoration: none;
+    font-size: 1.7rem;
+    font-weight: bold;
+}
+
+/* MAIN SECTION */
+.main-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding-top: 80px;
+}
+
+/* LOGIN CARD */
+.login-card {
+    background-color: #003d52;
+
+    width: 650px;
+    height: 700px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    padding-top: 100px;
+}
+
+.login-card h2 {
+    font-size: 4rem;
+    margin-bottom: 140px;
+}
+
+/* GOOGLE BUTTON */
+.google-btn-wrapper {
+    transform: scale(1.6);
+}
+
+/* USER INFO */
+.user-info {
+    text-align: center;
+}
+
+.user-info img {
+    border-radius: 50%;
+    margin-bottom: 20px;
+}
+
+.user-info p {
+    margin-bottom: 20px;
+    font-size: 1.4rem;
+}
+
+/* LOGOUT BUTTON */
+.logout-btn {
+    background-color: white;
+    color: #003d52;
+
+    padding: 12px 24px;
+    border-radius: 5px;
+
+    text-decoration: none;
+    font-weight: bold;
+}
