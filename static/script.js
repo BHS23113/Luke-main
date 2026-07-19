@@ -16,8 +16,13 @@ function handleCredentialResponse(response) {
 
         if (data.status === "success") {
             window.location.href = data.redirect;
-        } else {
-            alert("Login failed");
+        } 
+        else {
+            if (data.redirect) {
+                window.location.href = data.redirect;
+            } else {
+                alert("Login failed");
+            }
         }
     });
 }
