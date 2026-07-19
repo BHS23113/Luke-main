@@ -72,20 +72,14 @@ def login():
 
         user = cursor.fetchone()
 
-        # Create user if first login
+        # If the email isn't in the database, deny access
         if user is None:
-            cursor.execute("""
-                INSERT INTO users (email, name, role)
-                VALUES (?, ?, ?)
-            """, (email, name, "prefect"))
+            db.close()
 
-            db.commit()
-
-            cursor.execute(
-                "SELECT * FROM users WHERE email=?",
-                (email,)
-            )
-            user = cursor.fetchone()
+            return jsonify({
+                "status": "error",
+                "message": "You are not authorised to access PrefectConnect."
+            }), 403
 
         # Store DB user in session
         session["user"] = {
