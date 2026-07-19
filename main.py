@@ -30,7 +30,7 @@ def index():
 def dashboard():
 
     if "user" not in session:
-        return redirect("/")
+        return redirect(url_for("index"))
 
     return render_template(
         "dashboard.html",
@@ -112,7 +112,7 @@ def login():
 @app.route("/logout")
 def logout():
     session.clear()
-    return redirect("/")
+    return redirect(url_for("index"))
 
 
 if __name__ == "__main__":
