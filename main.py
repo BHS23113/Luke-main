@@ -36,6 +36,13 @@ def dashboard():
         user=session["user"]
     )
 
+@app.route("/locker-duty")
+def locker_duty():
+
+    if "user" not in session:
+        return redirect(url_for("index"))
+
+    return render_template("locker_duty.html", user=session["user"])
 
 @app.route("/login", methods=["POST"])
 def login():
@@ -100,7 +107,7 @@ def login():
             "message": str(e)
         }), 401
 
-#testing#
+
 @app.route("/logout")
 def logout():
     session.clear()
