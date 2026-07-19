@@ -78,7 +78,7 @@ def login():
 
             return jsonify({
                 "status": "error",
-                "message": "You are not authorised to access PrefectConnect."
+                "redirect": "/403"
             }), 403
 
         # Store DB user in session
@@ -101,6 +101,11 @@ def login():
             "status": "error",
             "message": str(e)
         }), 401
+    
+@app.route("/403")
+def forbidden():
+
+    return render_template("403.html"), 403
 
 
 @app.route("/logout")
