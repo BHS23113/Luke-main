@@ -9,7 +9,7 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 
     <!-- CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
 <body>
@@ -31,8 +31,6 @@
 
                 <div class="user-info">
 
-                    <img src="{{ user.picture }}" width="100">
-
                     <p>Welcome {{ user['name'] }}</p><br>
 
                     <a href="/logout" class="logout-btn">
@@ -45,7 +43,7 @@
 
                 <!-- Google Login Setup -->
                 <div id="g_id_onload"
-                    data-client_id="689612344288-p5f54jmflbfeh3f12p0o4bpmns3t9k8f.apps.googleusercontent.com"
+                    data-client_id="{{ client_id }}"
                     data-callback="handleCredentialResponse">
                 </div>
 

@@ -1,9 +1,10 @@
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 from google.oauth2 import id_token
 from google.auth.transport import requests as grequests
+from dotenv import load_dotenv
 import sqlite3
 import os
-from dotenv import load_dotenv
+
 load_dotenv(override=True)
 
 DATABASE = "prefectconnect.db"
@@ -21,7 +22,7 @@ GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 @app.route("/")
 def index():
     user = session.get("user")
-    return render_template("index.html", user=user)
+    return render_template("index.html", user=user, client_id=GOOGLE_CLIENT_ID)
 
 
 # DASHBOARD ROUTE
@@ -29,7 +30,7 @@ def index():
 def dashboard():
 
     if "user" not in session:
-        return redirect(url_for("index"))
+        return redirect("/")
 
     return render_template(
         "dashboard.html",
@@ -111,7 +112,7 @@ def login():
 @app.route("/logout")
 def logout():
     session.clear()
-    return redirect(url_for("index"))
+    return redirect("/")
 
 
 if __name__ == "__main__":
