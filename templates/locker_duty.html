@@ -1,78 +1,106 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Locker Duty</title>
+{% extends "layout.html" %}
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/locker_duty.css') }}?v=2">
-</head>
+{% block title %}
+Locker Duty
+{% endblock %}
 
-<body>
-    <div class="layout">
-        <div class="sidebar">
-            <h2>PREFECTS</h2>
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/locker_duty.css') }}">
+{% endblock %}
 
-            <a href="/dashboard">Dashboard</a>
-            <a href="/locker-duty">Locker Duty</a>
-            <a href="#">Notices</a>
-            <a href="#">Chat</a>
-            <a href="#">Assemblies</a>
+{% block content %}
 
-            <a href="/logout" class="logout">Logout</a>
-        </div>
-        <div class="main-content">
-            <!-- PAGE TITLE -->
-            <h1>Locker Duty Roster</h1>
+<h1>Locker Duty Roster</h1>
 
-            <p>
-                Lock the side doors on arrival - there will be staff on duty to assist.<br>
-                Monitor student behaviour.
-            </p>
+<p>
+    Lock the side doors on arrival - there will be staff on duty to assist.<br>
+    Monitor student behaviour.
+</p>
 
-            <!-- MAIN CONTAINER -->
-            <div class="container">
+<div class="container">
 
-                <!-- WEEK A -->
-                <div class="week">
-                    <h2>WEEK A</h2>
+    <!-- WEEK A -->
+    <div class="week">
 
-                    <table>
-                        <tr>
-                            <th>Day</th>
-                            <th>Students</th>
-                        </tr>
+        <h2>WEEK A</h2>
 
-                        <tr><td>Monday</td><td>Elizabeth, Rosie</td></tr>
-                        <tr><td>Tuesday</td><td>Barnaby, Samuel</td></tr>
-                        <tr><td>Wednesday</td><td>Ava, Dasha</td></tr>
-                        <tr><td>Thursday</td><td>Sione, Michaela</td></tr>
-                        <tr><td>Friday</td><td>James, Luke</td></tr>
+        <table>
 
-                    </table>
-                </div>
+            <tr>
+                <th>Day</th>
+                <th>Students</th>
+            </tr>
 
-                <!-- WEEK B -->
-                <div class="week">
-                    <h2>WEEK B</h2>
+            <tr>
+                <td>Monday</td>
+                <td>Elizabeth, Rosie</td>
+            </tr>
 
-                    <table>
-                        <tr>
-                            <th>Day</th>
-                            <th>Students</th>
-                        </tr>
+            <tr>
+                <td>Tuesday</td>
+                <td>Barnaby, Samuel</td>
+            </tr>
 
-                        <tr><td>Monday</td><td>Zoe, Chloe</td></tr>
-                        <tr><td>Tuesday</td><td>Kanon, Ida</td></tr>
-                        <tr><td>Wednesday</td><td>Lukas, Messi</td></tr>
-                        <tr><td>Thursday</td><td>Sho, Aaron</td></tr>
-                        <tr><td>Friday</td><td>Eason, Nilana</td></tr>
+            <tr>
+                <td>Wednesday</td>
+                <td>Ava, Dasha</td>
+            </tr>
 
-                    </table>
-                </div>
+            <tr>
+                <td>Thursday</td>
+                <td>Sione, Michaela</td>
+            </tr>
 
-            </div>
-        </div>
+            <tr>
+                <td>Friday</td>
+                <td>James, Luke</td>
+            </tr>
+
+        </table>
+
     </div>
-</body>
-</html>
+
+    <!-- WEEK B -->
+    <div class="week">
+
+        <h2>WEEK B</h2>
+
+        <table>
+
+            <tr>
+                <th>Day</th>
+                <th>Students</th>
+            </tr>
+
+            <tr>
+                <td>Monday</td>
+                <td>Zoe, Chloe</td>
+            </tr>
+
+            <tr>
+                <td>Tuesday</td>
+                <td>Kanon, Ida</td>
+            </tr>
+
+            <tr>
+                <td>Wednesday</td>
+                <td>Lukas, Messi</td>
+            </tr>
+
+            <tr>
+                <td>Thursday</td>
+                <td>Sho, Aaron</td>
+            </tr>
+
+            <tr>
+                <td>Friday</td>
+                <td>Eason, Nilana</td>
+            </tr>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}
