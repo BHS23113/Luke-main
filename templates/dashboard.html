@@ -1,60 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+{% extends "layout.html" %}
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
-</head>
+{% block title %}
+Dashboard
+{% endblock %}
 
-<body>
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
 
-    <div class="layout">
+{% block content %}
 
-        <!-- SIDEBAR -->
-        <div class="sidebar">
-            <h2>PREFECTS</h2>
+<div class="topbar">
+    <h1>Dashboard</h1>
+    <p>Welcome {{ user.name }}</p>
+</div>
 
-            <a href="/dashboard">Dashboard</a>
-            <a href="/locker-duty">Locker Duty</a>
-            <a href="#">Notices</a>
-            <a href="#">Chat</a>
-            <a href="#">Assemblies</a>
+<div class="cards">
 
-            <a href="/logout" class="logout">Logout</a>
-        </div>
-
-        <!-- MAIN CONTENT -->
-        <div class="main">
-
-            <div class="topbar">
-                <h1>Dashboard</h1>
-                <p>Welcome {{ user.name }}</p>
-            </div>
-
-            <div class="cards">
-
-                <div class="card">
-                    <h3>Locker Duty</h3>
-                    <p>Next duty: Tomorrow</p>
-                </div>
-
-                <div class="card">
-                    <h3>Notices</h3>
-                    <p>3 new announcements</p>
-                </div>
-
-                <div class="card">
-                    <h3>Chat</h3>
-                    <p>Open discussions</p>
-                </div>
-
-            </div>
-
-        </div>
-
+    <div class="card">
+        <h3>Locker Duty</h3>
+        <p>Next duty: Tomorrow</p>
     </div>
 
-</body>
-</html>
+    <div class="card">
+        <h3>Notices</h3>
+        <p>3 new announcements</p>
+    </div>
+
+    <div class="card">
+        <h3>Chat</h3>
+        <p>Open discussions</p>
+    </div>
+
+</div>
+
+{% endblock %}
