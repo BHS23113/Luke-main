@@ -1,0 +1,74 @@
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* BODY */
+body {
+    background-color: #ececec;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    min-height: 100vh;
+}
+
+/* ERROR CARD */
+.error-card {
+    width: 650px;
+    background-color: #003d52;
+    color: white;
+
+    padding: 60px;
+    border-radius: 12px;
+
+    text-align: center;
+
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+/* ERROR NUMBER */
+.error-card h1 {
+    font-size: 5rem;
+    margin-bottom: 10px;
+}
+
+/* HEADING */
+.error-card h2 {
+    font-size: 2rem;
+    margin-bottom: 25px;
+}
+
+/* TEXT */
+.error-card p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+/* BUTTON */
+.button {
+    display: inline-block;
+
+    margin-top: 20px;
+    padding: 12px 28px;
+
+    background-color: white;
+    color: #003d52;
+
+    text-decoration: none;
+    font-weight: bold;
+
+    border-radius: 8px;
+
+    transition: 0.2s;
+}
+
+/* BUTTON HOVER */
+.button:hover {
+    background-color: #e5e5e5;
+}

@@ -1,26 +1,35 @@
-{% extends "layout.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Denied</title>
 
-{% block title %}
-Access Denied
-{% endblock %}
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/403.css') }}">
+</head>
 
+<body>
 
-{% block content %}
+    <div class="error-card">
 
-<div class="error-page">
+        <h1>403</h1>
 
-    <h1>403<br><br></h1>
+        <h2>Access Denied</h2>
 
-    <h2>Access Denied<br><br></h2>
+        <p>
+            Your Google account isn't registered to use PrefectConnect.
+        </p>
 
-    <p>
-        Sorry, your account is not registered as a PrefectConnect user.<br>If you believe this is a mistake, please contact an administrator.<br><br>
-    </p>
+        <p>
+            If you believe this is a mistake, please contact an administrator.
+        </p>
 
-    <a href="/" class="error-button">
-        Return to Login
-    </a>
+        <a href="/" class="button">
+            Return to Login
+        </a>
 
-</div>
+    </div>
 
-{% endblock %}
+</body>
+</html>

@@ -72,7 +72,7 @@ def login():
 
         user = cursor.fetchone()
 
-        # If the email isn't in the database, deny access
+        # If the email isn't in the database deny access
         if user is None:
             db.close()
 
