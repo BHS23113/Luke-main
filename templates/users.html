@@ -1,0 +1,76 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Users
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/users.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="topbar">
+    <h1>Users</h1>
+    <p>Manage prefect accounts and permissions.</p>
+</div>
+
+<div class="actions">
+    <a href="#" class="button">+ Add User</a>
+</div>
+
+<div class="table-card">
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for member in users %}
+
+            <tr>
+
+                <td>{{ member.name }}</td>
+
+                <td>{{ member.email }}</td>
+
+                <td>{{ member.role }}</td>
+
+                <td>
+                    {% if member.is_active %}
+                        Active
+                    {% else %}
+                        Inactive
+                    {% endif %}
+                </td>
+
+                <td>
+                    <button>Edit Role</button>
+
+                    {% if member.is_active %}
+                        <button>Deactivate</button>
+                    {% else %}
+                        <button>Activate</button>
+                    {% endif %}
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% endblock %}
