@@ -72,7 +72,7 @@ def login():
 
         user = cursor.fetchone()
 
-        # If the email isn't in the database deny access
+        # If the email isn't in the database, deny access
         if user is None:
             db.close()
 
@@ -85,7 +85,8 @@ def login():
         session["user"] = {
             "user_id": user["user_id"],
             "email": user["email"],
-            "name": user["name"]
+            "name": user["name"],
+            "role": user["role"]
         }
 
         db.close()
@@ -101,6 +102,34 @@ def login():
             "status": "error",
             "message": str(e)
         }), 401
+    
+@app.route("/users")
+def users():
+
+    if "user" not in session:
+        return redirect(url_for("index"))
+
+    if session["user"]["role"] != "admin":
+        return render_template("403.html"), 403
+
+    db = get_db()
+    cursor = db.cursor()
+
+    cursor.execute("""
+        SELECT *
+        FROM users
+        ORDER BY name
+    """)
+
+    users = cursor.fetchall()
+
+    db.close()
+
+    return render_template(
+        "users.html",
+        user=session["user"],
+        users=users
+    )
     
 @app.route("/403")
 def forbidden():
