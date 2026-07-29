@@ -3,24 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>
         {% block title %}
         PrefectConnect
         {% endblock %}
     </title>
 
-    <!-- CSS -->
+    <!-- Shared CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
 
     <!-- Page-specific CSS -->
     {% block css %}
     {% endblock %}
-
 </head>
-<body>
-    <div class ="layout">
 
-        <!--Side Bar-->
+<body>
+
+    <div class="layout">
+
+        <!-- SIDEBAR -->
         <div class="sidebar">
 
             <h2>PREFECTS</h2>
@@ -31,18 +33,26 @@
             <a href="#">Chat</a>
             <a href="#">Assemblies</a>
 
+            <!-- Only visible to admins -->
+            {% if user.role == "admin" %}
+                <a href="/users">Users</a>
+            {% endif %}
+
             <a href="/logout" class="logout">Logout</a>
 
         </div>
 
-        <main class="main-content">
+        <!-- PAGE CONTENT -->
+        <div class="main-content">
 
             {% block content %}
             {% endblock %}
 
-        </main>
+        </div>
+
     </div>
 
+    <!-- Page-specific JavaScript -->
     {% block scripts %}
     {% endblock %}
 
