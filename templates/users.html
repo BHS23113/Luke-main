@@ -28,7 +28,6 @@ Users
                 <th>Name</th>
                 <th>Email</th>
                 <th>Role</th>
-                <th>Status</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -46,21 +45,26 @@ Users
                 <td>{{ member.role }}</td>
 
                 <td>
-                    {% if member.is_active %}
-                        Active
-                    {% else %}
-                        Inactive
-                    {% endif %}
-                </td>
 
-                <td>
-                    <button>Edit Role</button>
+                    <button class="role-btn">
+                        Edit Role
+                    </button>
 
-                    {% if member.is_active %}
-                        <button>Deactivate</button>
-                    {% else %}
-                        <button>Activate</button>
-                    {% endif %}
+                    <form action="/delete-user/{{ member.user_id }}"
+                          method="POST"
+                          style="display: inline;">
+
+                        <button
+                            type="submit"
+                            class="delete-btn"
+                            onclick="return confirm('Are you sure you want to delete {{ member.name }}?')">
+
+                            Delete
+
+                        </button>
+
+                    </form>
+
                 </td>
 
             </tr>
