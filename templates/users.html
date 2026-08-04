@@ -39,9 +39,7 @@ Users
             <tr>
 
                 <td>{{ member.name }}</td>
-
                 <td>{{ member.email }}</td>
-
                 <td>{{ member.role }}</td>
 
                 <td>
@@ -50,20 +48,13 @@ Users
                         Edit Role
                     </button>
 
-                    <form action="/delete-user/{{ member.user_id }}"
-                          method="POST"
-                          style="display: inline;">
+                    <button
+                        class="delete-btn"
+                        onclick="openDeleteModal('{{ member.user_id }}', '{{ member.name }}')">
 
-                        <button
-                            type="submit"
-                            class="delete-btn"
-                            onclick="return confirm('Are you sure you want to delete {{ member.name }}?')">
+                        Delete
 
-                            Delete
-
-                        </button>
-
-                    </form>
+                    </button>
 
                 </td>
 
@@ -76,5 +67,83 @@ Users
     </table>
 
 </div>
+
+
+<!-- Delete Confirmation Modal -->
+
+<div id="deleteModal" class="modal">
+
+    <div class="modal-content">
+
+        <h2>Delete User</h2>
+
+        <p>
+            Are you sure you want to remove
+            <strong id="deleteName"></strong>
+            from PrefectConnect?
+        </p>
+
+        <div class="modal-actions">
+
+            <button
+                class="cancel-btn"
+                onclick="closeDeleteModal()">
+
+                Cancel
+
+            </button>
+
+            <form id="deleteForm" method="POST">
+
+                <button
+                    type="submit"
+                    class="confirm-delete-btn">
+
+                    Delete
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+
+function openDeleteModal(id, name) {
+
+    document.getElementById("deleteModal").style.display = "flex";
+
+    document.getElementById("deleteName").textContent = name;
+
+    document.getElementById("deleteForm").action = "/delete-user/" + id;
+
+}
+
+function closeDeleteModal() {
+
+    document.getElementById("deleteModal").style.display = "none";
+
+}
+
+window.onclick = function(event) {
+
+    const modal = document.getElementById("deleteModal");
+
+    if (event.target == modal) {
+        closeDeleteModal();
+    }
+
+}
+
+</script>
 
 {% endblock %}

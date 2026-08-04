@@ -26,3 +26,32 @@ function handleCredentialResponse(response) {
         }
     });
 }
+
+
+// ---------- Delete User Modal ----------
+
+function openDeleteModal(id, name) {
+
+    document.getElementById("deleteModal").style.display = "flex";
+
+    document.getElementById("deleteName").textContent = name;
+
+    document.getElementById("deleteForm").action = "/delete-user/" + id;
+
+}
+
+function closeDeleteModal() {
+
+    document.getElementById("deleteModal").style.display = "none";
+
+}
+
+window.onclick = function(event) {
+
+    const modal = document.getElementById("deleteModal");
+
+    if (event.target === modal) {
+        closeDeleteModal();
+    }
+
+}
