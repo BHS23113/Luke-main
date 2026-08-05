@@ -46,7 +46,7 @@ function closeDeleteModal() {
 
 }
 
-window.onclick = function(event) {
+window.addEventListener("click", function(event) {
 
     const modal = document.getElementById("deleteModal");
 
@@ -54,4 +54,4 @@ window.onclick = function(event) {
         closeDeleteModal();
     }
 
-}
+});
