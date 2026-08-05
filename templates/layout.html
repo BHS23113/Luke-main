@@ -16,6 +16,7 @@
     <!-- Page-specific CSS -->
     {% block css %}
     {% endblock %}
+
 </head>
 
 <body>
@@ -51,6 +52,9 @@
         </div>
 
     </div>
+
+    <!-- Shared JavaScript -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 
     <!-- Page-specific JavaScript -->
     {% block scripts %}
