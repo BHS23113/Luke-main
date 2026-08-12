@@ -1,4 +1,7 @@
+// ================= GOOGLE LOGIN =================
+
 function handleCredentialResponse(response) {
+
     console.log("TOKEN:", response.credential);
 
     fetch("/login", {
@@ -10,25 +13,41 @@ function handleCredentialResponse(response) {
             credential: response.credential
         })
     })
+
     .then(res => res.json())
+
     .then(data => {
+
         console.log("SERVER RESPONSE:", data);
 
         if (data.status === "success") {
+
             window.location.href = data.redirect;
-        } 
-        else {
-            if (data.redirect) {
-                window.location.href = data.redirect;
-            } else {
-                alert("Login failed");
-            }
+
         }
+
+        else {
+
+            if (data.redirect) {
+
+                window.location.href = data.redirect;
+
+            }
+
+            else {
+
+                alert("Login failed");
+
+            }
+
+        }
+
     });
+
 }
 
 
-// ---------- Delete User Modal ----------
+// ================= USERS PAGE =================
 
 function openDeleteModal(id, name) {
 
@@ -40,18 +59,39 @@ function openDeleteModal(id, name) {
 
 }
 
+
 function closeDeleteModal() {
 
     document.getElementById("deleteModal").style.display = "none";
 
 }
 
+
+function openAddUserModal() {
+
+    document.getElementById("addUserModal").style.display = "flex";
+
+}
+
+
+function closeAddUserModal() {
+
+    document.getElementById("addUserModal").style.display = "none";
+
+}
+
+
 window.addEventListener("click", function(event) {
 
-    const modal = document.getElementById("deleteModal");
+    const deleteModal = document.getElementById("deleteModal");
+    const addUserModal = document.getElementById("addUserModal");
 
-    if (event.target === modal) {
+    if (deleteModal && event.target === deleteModal) {
         closeDeleteModal();
+    }
+
+    if (addUserModal && event.target === addUserModal) {
+        closeAddUserModal();
     }
 
 });

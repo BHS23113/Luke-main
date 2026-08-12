@@ -156,6 +156,48 @@ def delete_user(user_id):
     db.close()
 
     return redirect(url_for("users"))
+
+@app.route("/add-user", methods=["POST"])
+def add_user():
+
+    if "user" not in session:
+        return redirect(url_for("index"))
+
+    if session["user"]["role"] != "admin":
+        return render_template("403.html"), 403
+
+    name = request.form["name"]
+    email = request.form["email"]
+    role = request.form["role"]
+
+    db = get_db()
+    cursor = db.cursor()
+
+    # Check if the email already exists
+    cursor.execute(
+        "SELECT * FROM users WHERE email=?",
+        (email,)
+    )
+
+    existing_user = cursor.fetchone()
+
+    if existing_user:
+        db.close()
+        return redirect(url_for("users"))
+
+    # Add the new user
+    cursor.execute(
+        """
+        INSERT INTO users (name, email, role)
+        VALUES (?, ?, ?)
+        """,
+        (name, email, role)
+    )
+
+    db.commit()
+    db.close()
+
+    return redirect(url_for("users"))
     
 @app.route("/403")
 def forbidden():
@@ -171,3 +213,5 @@ def logout():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+    

@@ -16,7 +16,9 @@ Users
 </div>
 
 <div class="actions">
-    <a href="#" class="button">+ Add User</a>
+    <button class="button" onclick="openAddUserModal()">
+        + Add User
+    </button>
 </div>
 
 <div class="table-card">
@@ -68,8 +70,7 @@ Users
 
 </div>
 
-
-<!-- Delete Confirmation Modal -->
+<!-- Delete Modal -->
 
 <div id="deleteModal" class="modal">
 
@@ -86,6 +87,7 @@ Users
         <div class="modal-actions">
 
             <button
+                type="button"
                 class="cancel-btn"
                 onclick="closeDeleteModal()">
 
@@ -111,39 +113,71 @@ Users
 
 </div>
 
-{% endblock %}
+<!-- Add User Modal -->
 
+<div id="addUserModal" class="modal">
 
-{% block scripts %}
+    <div class="modal-content">
 
-<script>
+        <h2>Add User</h2>
 
-function openDeleteModal(id, name) {
+        <form action="/add-user" method="POST">
 
-    document.getElementById("deleteModal").style.display = "flex";
+            <label>Name</label>
 
-    document.getElementById("deleteName").textContent = name;
+            <input
+                type="text"
+                name="name"
+                placeholder="Full name"
+                required>
 
-    document.getElementById("deleteForm").action = "/delete-user/" + id;
+            <label>Email</label>
 
-}
+            <input
+                type="email"
+                name="email"
+                placeholder="school@email.com"
+                required>
 
-function closeDeleteModal() {
+            <label>Role</label>
 
-    document.getElementById("deleteModal").style.display = "none";
+            <select name="role" required>
 
-}
+                <option value="prefect">
+                    Prefect
+                </option>
 
-window.onclick = function(event) {
+                <option value="admin">
+                    Admin
+                </option>
 
-    const modal = document.getElementById("deleteModal");
+            </select>
 
-    if (event.target == modal) {
-        closeDeleteModal();
-    }
+            <div class="modal-actions">
 
-}
+                <button
+                    type="button"
+                    class="cancel-btn"
+                    onclick="closeAddUserModal()">
 
-</script>
+                    Cancel
+
+                </button>
+
+                <button
+                    type="submit"
+                    class="confirm-btn">
+
+                    Add User
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
 
 {% endblock %}

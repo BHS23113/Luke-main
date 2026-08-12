@@ -149,3 +149,60 @@ td button:hover {
 .confirm-delete-btn:hover {
     background: #b91c1c;
 }
+
+/* ================= ADD USER MODAL ================= */
+
+.modal-content label {
+
+    display: block;
+    font-weight: 600;
+    margin-top: 15px;
+    margin-bottom: 6px;
+
+}
+
+.modal-content input,
+.modal-content select {
+
+    width: 100%;
+    padding: 10px 12px;
+
+    margin-bottom: 20px;
+
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+
+    font-size: 15px;
+    box-sizing: border-box;
+
+}
+
+.modal-content input:focus,
+.modal-content select:focus {
+
+    outline: none;
+    border-color: #2563eb;
+
+}
+
+.confirm-btn {
+
+    background: #2563eb;
+    color: white;
+
+    border: none;
+    border-radius: 8px;
+
+    padding: 10px 20px;
+
+    cursor: pointer;
+
+    transition: background 0.2s;
+
+}
+
+.confirm-btn:hover {
+
+    background: #1d4ed8;
+
+}
