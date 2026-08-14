@@ -198,6 +198,34 @@ def add_user():
     db.close()
 
     return redirect(url_for("users"))
+
+@app.route("/edit-role/<int:user_id>", methods=["POST"])
+def edit_role(user_id):
+
+    if "user" not in session:
+        return redirect(url_for("index"))
+
+    if session["user"]["role"] != "admin":
+        return render_template("403.html"), 403
+
+    role = request.form["role"]
+
+    db = get_db()
+    cursor = db.cursor()
+
+    cursor.execute(
+        """
+        UPDATE users
+        SET role = ?
+        WHERE user_id = ?
+        """,
+        (role, user_id)
+    )
+
+    db.commit()
+    db.close()
+
+    return redirect(url_for("users")) 
     
 @app.route("/403")
 def forbidden():

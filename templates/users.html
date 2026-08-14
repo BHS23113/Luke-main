@@ -46,9 +46,18 @@ Users
 
                 <td>
 
-                    <button class="role-btn">
+                    <!-- Edit Role Button -->
+
+                    <button
+                        class="role-btn"
+                        onclick="openRoleModal('{{ member.user_id }}', '{{ member.name }}', '{{ member.role }}')">
+
                         Edit Role
+
                     </button>
+
+
+                    <!-- Delete Button -->
 
                     <button
                         class="delete-btn"
@@ -70,7 +79,8 @@ Users
 
 </div>
 
-<!-- Delete Modal -->
+
+<!--DELETE MODAL-->
 
 <div id="deleteModal" class="modal">
 
@@ -113,7 +123,8 @@ Users
 
 </div>
 
-<!-- Add User Modal -->
+
+<!--ADD USER MODAL-->
 
 <div id="addUserModal" class="modal">
 
@@ -131,6 +142,7 @@ Users
                 placeholder="Full name"
                 required>
 
+
             <label>Email</label>
 
             <input
@@ -138,6 +150,7 @@ Users
                 name="email"
                 placeholder="school@email.com"
                 required>
+
 
             <label>Role</label>
 
@@ -152,6 +165,7 @@ Users
                 </option>
 
             </select>
+
 
             <div class="modal-actions">
 
@@ -169,6 +183,68 @@ Users
                     class="confirm-btn">
 
                     Add User
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!--EDIT ROLE MODAL-->
+
+<div id="roleModal" class="modal">
+
+    <div class="modal-content">
+
+        <h2>Edit Role</h2>
+
+        <p>
+            Change the role for
+            <strong id="roleName"></strong>
+        </p>
+
+
+        <form id="roleForm" method="POST">
+
+            <label>Role</label>
+
+            <select
+                name="role"
+                id="roleSelect"
+                required>
+
+                <option value="prefect">
+                    Prefect
+                </option>
+
+                <option value="admin">
+                    Admin
+                </option>
+
+            </select>
+
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    class="cancel-btn"
+                    onclick="closeRoleModal()">
+
+                    Cancel
+
+                </button>
+
+                <button
+                    type="submit"
+                    class="confirm-btn">
+
+                    Save Changes
 
                 </button>
 

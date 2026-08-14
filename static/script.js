@@ -1,4 +1,4 @@
-// ================= GOOGLE LOGIN =================
+// GOOGLE LOGIN 
 
 function handleCredentialResponse(response) {
 
@@ -24,17 +24,13 @@ function handleCredentialResponse(response) {
 
             window.location.href = data.redirect;
 
-        }
-
-        else {
+        } else {
 
             if (data.redirect) {
 
                 window.location.href = data.redirect;
 
-            }
-
-            else {
+            } else {
 
                 alert("Login failed");
 
@@ -47,7 +43,7 @@ function handleCredentialResponse(response) {
 }
 
 
-// ================= USERS PAGE =================
+// DELETE USER 
 
 function openDeleteModal(id, name) {
 
@@ -67,6 +63,8 @@ function closeDeleteModal() {
 }
 
 
+// ADD USER 
+
 function openAddUserModal() {
 
     document.getElementById("addUserModal").style.display = "flex";
@@ -81,17 +79,57 @@ function closeAddUserModal() {
 }
 
 
+// EDIT ROLE
+
+function openRoleModal(id, name, role) {
+
+    document.getElementById("roleModal").style.display = "flex";
+
+    document.getElementById("roleName").textContent = name;
+
+    document.getElementById("roleSelect").value = role;
+
+    document.getElementById("roleForm").action = "/edit-role/" + id;
+
+}
+
+
+function closeRoleModal() {
+
+    document.getElementById("roleModal").style.display = "none";
+
+}
+
+
+// CLOSE MODALS  
+
 window.addEventListener("click", function(event) {
 
     const deleteModal = document.getElementById("deleteModal");
+
     const addUserModal = document.getElementById("addUserModal");
 
+    const roleModal = document.getElementById("roleModal");
+
+
     if (deleteModal && event.target === deleteModal) {
+
         closeDeleteModal();
+
     }
 
+
     if (addUserModal && event.target === addUserModal) {
+
         closeAddUserModal();
+
+    }
+
+
+    if (roleModal && event.target === roleModal) {
+
+        closeRoleModal();
+
     }
 
 });
