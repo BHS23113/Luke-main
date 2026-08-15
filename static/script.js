@@ -133,3 +133,17 @@ window.addEventListener("click", function(event) {
     }
 
 });
+
+// ADD NOTICE
+
+function openAddNoticeModal() {
+
+    document.getElementById("addNoticeModal").style.display = "flex";
+
+}
+
+function closeAddNoticeModal() {
+
+    document.getElementById("addNoticeModal").style.display = "none";
+
+}

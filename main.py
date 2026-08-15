@@ -115,6 +115,68 @@ def assemblies():
         "assembly.html",
         user=session["user"]
     )
+
+@app.route("/notices")
+def notices():
+
+    if "user" not in session:
+        return redirect(url_for("index"))
+
+    db = get_db()
+    cursor = db.cursor()
+
+    cursor.execute("""
+        SELECT
+            notice.notice_id,
+            notice.title,
+            notice.content,
+            notice.created_at,
+            users.name AS author
+        FROM notice
+        JOIN users
+            ON notice.created_by = users.user_id
+        WHERE notice.is_active = 1
+        ORDER BY notice.created_at DESC
+    """)
+
+    notices = cursor.fetchall()
+
+    db.close()
+
+    return render_template(
+        "notices.html",
+        user=session["user"],
+        notices=notices
+    )
+@app.route("/add-notice", methods=["POST"])
+def add_notice():
+
+    if "user" not in session:
+        return redirect(url_for("index"))
+
+    if session["user"]["role"] != "admin":
+        return render_template("403.html"), 403
+
+    title = request.form["title"]
+    content = request.form["content"]
+
+    user_id = session["user"]["user_id"]
+
+    db = get_db()
+    cursor = db.cursor()
+
+    cursor.execute(
+        """
+        INSERT INTO notice (title, content, created_by)
+        VALUES (?, ?, ?)
+        """,
+        (title, content, user_id)
+    )
+
+    db.commit()
+    db.close()
+
+    return redirect(url_for("notices"))
     
 @app.route("/users")
 def users():

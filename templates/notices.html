@@ -1,0 +1,229 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Notices
+{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/notices.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="topbar">
+
+    <h1>Notices</h1>
+
+    <p>
+        Important announcements and information for prefects.
+    </p>
+
+</div>
+
+
+{% if user.role == "admin" %}
+
+<div class="actions">
+
+    <button
+        class="button"
+        onclick="openAddNoticeModal()">
+
+        + Add Notice
+
+    </button>
+
+</div>
+
+{% endif %}
+
+
+<div class="notices-container">
+
+    {% if notices %}
+
+        {% for notice in notices %}
+
+        <div class="notice-card">
+
+            <div class="notice-header">
+
+                <h2>
+                    {{ notice.title }}
+                </h2>
+
+                {% if user.role == "admin" %}
+
+                <button
+                    class="delete-notice-btn"
+                    onclick="openDeleteNoticeModal(
+                        '{{ notice.notice_id }}',
+                        '{{ notice.title }}'
+                    )">
+
+                    Delete
+
+                </button>
+
+                {% endif %}
+
+            </div>
+
+
+            <div class="notice-content">
+
+                <p>
+                    {{ notice.content }}
+                </p>
+
+            </div>
+
+
+            <div class="notice-footer">
+
+                <span>
+                    Posted by {{ notice.author }}
+                </span>
+
+                <span>
+                    {{ notice.created_at }}
+                </span>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="no-notices">
+
+            <h2>No Notices</h2>
+
+            <p>
+                There are currently no notices to display.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+<!-- ================= ADD NOTICE MODAL ================= -->
+
+{% if user.role == "admin" %}
+
+<div id="addNoticeModal" class="modal">
+
+    <div class="modal-content">
+
+        <h2>Add Notice</h2>
+
+        <form action="/add-notice" method="POST">
+
+            <label>
+                Title
+            </label>
+
+            <input
+                type="text"
+                name="title"
+                placeholder="Notice title"
+                required>
+
+
+            <label>
+                Notice
+            </label>
+
+            <textarea
+                name="content"
+                placeholder="Write your notice..."
+                rows="6"
+                required></textarea>
+
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    class="cancel-btn"
+                    onclick="closeAddNoticeModal()">
+
+                    Cancel
+
+                </button>
+
+                <button
+                    type="submit"
+                    class="confirm-btn">
+
+                    Post Notice
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+
+<!-- ================= DELETE NOTICE MODAL ================= -->
+
+{% if user.role == "admin" %}
+
+<div id="deleteNoticeModal" class="modal">
+
+    <div class="modal-content">
+
+        <h2>Delete Notice</h2>
+
+        <p>
+            Are you sure you want to delete
+            <strong id="deleteNoticeTitle"></strong>?
+        </p>
+
+
+        <div class="modal-actions">
+
+            <button
+                type="button"
+                class="cancel-btn"
+                onclick="closeDeleteNoticeModal()">
+
+                Cancel
+
+            </button>
+
+
+            <form
+                id="deleteNoticeForm"
+                method="POST">
+
+                <button
+                    type="submit"
+                    class="confirm-delete-btn">
+
+                    Delete
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+{% endblock %}
