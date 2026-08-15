@@ -1,25 +1,35 @@
-.document-card {
+.document-actions {
 
-    background: white;
+    display: flex;
 
-    border-radius: 12px;
+    justify-content: center;
 
-    padding: 20px;
-
-    margin-top: 25px;
-
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    margin-top: 20px;
 
 }
 
-.document-card iframe {
+.edit-document-button {
 
-    width: 100%;
+    display: inline-block;
 
-    height: 800px;
+    padding: 10px 20px;
 
-    border: none;
+    background-color: #003d52;
+
+    color: white;
+
+    text-decoration: none;
 
     border-radius: 8px;
+
+    font-weight: 600;
+
+    transition: background-color 0.2s;
+
+}
+
+.edit-document-button:hover {
+
+    background-color: #00566f;
 
 }
