@@ -177,6 +177,32 @@ def add_notice():
     db.close()
 
     return redirect(url_for("notices"))
+
+@app.route("/delete-notice/<int:notice_id>", methods=["POST"])
+def delete_notice(notice_id):
+
+    if "user" not in session:
+        return redirect(url_for("index"))
+
+    if session["user"]["role"] != "admin":
+        return render_template("403.html"), 403
+
+    db = get_db()
+    cursor = db.cursor()
+
+    cursor.execute(
+        """
+        UPDATE notice
+        SET is_active = 0
+        WHERE notice_id = ?
+        """,
+        (notice_id,)
+    )
+
+    db.commit()
+    db.close()
+
+    return redirect(url_for("notices"))
     
 @app.route("/users")
 def users():

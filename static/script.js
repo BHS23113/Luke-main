@@ -147,3 +147,23 @@ function closeAddNoticeModal() {
     document.getElementById("addNoticeModal").style.display = "none";
 
 }
+
+// DELETE NOTICE
+
+function openDeleteNoticeModal(id, title) {
+
+    document.getElementById("deleteNoticeModal").style.display = "flex";
+
+    document.getElementById("deleteNoticeTitle").textContent = title;
+
+    document.getElementById("deleteNoticeForm").action =
+        "/delete-notice/" + id;
+
+}
+
+
+function closeDeleteNoticeModal() {
+
+    document.getElementById("deleteNoticeModal").style.display = "none";
+
+}
