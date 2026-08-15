@@ -5,6 +5,8 @@ from dotenv import load_dotenv
 import sqlite3
 import os
 
+print("Hello, World!")
+
 load_dotenv(override=True)
 
 DATABASE = "prefectconnect.db"
@@ -102,6 +104,17 @@ def login():
             "status": "error",
             "message": str(e)
         }), 401
+
+@app.route("/assemblies")
+def assemblies():
+
+    if "user" not in session:
+        return redirect(url_for("index"))
+
+    return render_template(
+        "assembly.html",
+        user=session["user"]
+    )
     
 @app.route("/users")
 def users():
