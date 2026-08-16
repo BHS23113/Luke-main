@@ -56,10 +56,10 @@ Notices
 
                 <button
                     class="delete-notice-btn"
-                    onclick="openDeleteNoticeModal(
-                        '{{ notice.notice_id }}',
-                        '{{ notice.title }}'
-                    )">
+                    onclick='openDeleteNoticeModal(
+                        "{{ notice.notice_id }}",
+                        {{ notice.title | tojson }}
+                    )'>
 
                     Delete
 
@@ -176,7 +176,7 @@ Notices
 {% endif %}
 
 
-<!-- DELETE NOTICE MODAL  -->
+<!-- DELETE NOTICE MODAL -->
 
 {% if user.role == "admin" %}
 
