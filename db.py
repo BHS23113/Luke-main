@@ -48,6 +48,19 @@ CREATE TABLE IF NOT EXISTS notice (
 )
 """)
 
+# NOTICE READ TABLE
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS notice_read (
+    read_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    notice_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    read_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(notice_id, user_id),
+    FOREIGN KEY (notice_id) REFERENCES notice(notice_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+)
+""")
+
 # ASSEMBLY TABLE
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS assembly (
@@ -56,6 +69,7 @@ CREATE TABLE IF NOT EXISTS assembly (
     date DATE NOT NULL
 )
 """)
+
 
 # ASSEMBLY IDEA TABLE
 cursor.execute("""
@@ -71,6 +85,7 @@ CREATE TABLE IF NOT EXISTS assembly_idea (
 
 # RUN SHEET TABLE
 cursor.execute("""
+               
 CREATE TABLE IF NOT EXISTS run_sheet (
     runsheet_id INTEGER PRIMARY KEY AUTOINCREMENT,
     assembly_id INTEGER NOT NULL,

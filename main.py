@@ -37,11 +37,19 @@ def dashboard():
     db = get_db()
     cursor = db.cursor()
 
+    user_id = session["user"]["user_id"]
+
+    # Count active notices this user has NOT read
     cursor.execute("""
         SELECT COUNT(*)
         FROM notice
-        WHERE is_active = 1
-    """)
+        WHERE notice.is_active = 1
+        AND notice.notice_id NOT IN (
+            SELECT notice_id
+            FROM notice_read
+            WHERE user_id = ?
+        )
+    """, (user_id,))
 
     notice_count = cursor.fetchone()[0]
 
@@ -139,6 +147,7 @@ def notices():
     db = get_db()
     cursor = db.cursor()
 
+    # Get all active notices
     cursor.execute("""
         SELECT
             notice.notice_id,
@@ -155,6 +164,19 @@ def notices():
 
     notices = cursor.fetchall()
 
+    # Get the current user's ID
+    user_id = session["user"]["user_id"]
+
+    # Mark all active notices as read for this user
+    for notice in notices:
+
+        cursor.execute("""
+            INSERT OR IGNORE INTO notice_read
+            (notice_id, user_id)
+            VALUES (?, ?)
+        """, (notice["notice_id"], user_id))
+
+    db.commit()
     db.close()
 
     return render_template(
@@ -162,6 +184,7 @@ def notices():
         user=session["user"],
         notices=notices
     )
+
 @app.route("/add-notice", methods=["POST"])
 def add_notice():
 
