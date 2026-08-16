@@ -112,7 +112,7 @@ Notices
 </div>
 
 
-<!-- ================= ADD NOTICE MODAL ================= -->
+<!-- ADD NOTICE MODAL  -->
 
 {% if user.role == "admin" %}
 
@@ -132,6 +132,7 @@ Notices
                 type="text"
                 name="title"
                 placeholder="Notice title"
+                maxlength="100"
                 required>
 
 
@@ -143,6 +144,7 @@ Notices
                 name="content"
                 placeholder="Write your notice..."
                 rows="6"
+                maxlength="2000"
                 required></textarea>
 
 

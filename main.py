@@ -157,8 +157,11 @@ def add_notice():
     if session["user"]["role"] != "admin":
         return render_template("403.html"), 403
 
-    title = request.form["title"]
-    content = request.form["content"]
+    title = request.form["title"].strip()
+    content = request.form["content"].strip()
+
+    if len(title) > 100 or len(content) > 2000:
+        return redirect(url_for("notices"))
 
     user_id = session["user"]["user_id"]
 
