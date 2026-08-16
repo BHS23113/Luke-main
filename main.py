@@ -34,9 +34,23 @@ def dashboard():
     if "user" not in session:
         return redirect(url_for("index"))
 
+    db = get_db()
+    cursor = db.cursor()
+
+    cursor.execute("""
+        SELECT COUNT(*)
+        FROM notice
+        WHERE is_active = 1
+    """)
+
+    notice_count = cursor.fetchone()[0]
+
+    db.close()
+
     return render_template(
         "dashboard.html",
-        user=session["user"]
+        user=session["user"],
+        notice_count=notice_count
     )
 
 @app.route("/locker-duty")
