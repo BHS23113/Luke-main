@@ -69,6 +69,9 @@
     padding: 25px;
 
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+    /* Prevent long content from breaking the page */
+    overflow: hidden;
 }
 
 
@@ -89,6 +92,8 @@
     margin: 0;
 
     color: #003d52;
+
+    overflow-wrap: anywhere;
 }
 
 
@@ -102,12 +107,19 @@
 
 .notice-content p {
     margin: 0;
+    padding: 0;
 
     line-height: 1.6;
 
     color: #333;
 
+    /* Preserve intentional line breaks */
     white-space: pre-wrap;
+
+    /* Break extremely long strings */
+    overflow-wrap: anywhere;
+
+    word-break: normal;
 }
 
 
