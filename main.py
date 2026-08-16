@@ -160,7 +160,7 @@ def add_notice():
     title = request.form["title"].strip()
     content = request.form["content"].strip()
 
-    if len(title) > 100 or len(content) > 750:
+    if len(title) > 50 or len(content) > 500:
         return redirect(url_for("notices"))
 
     user_id = session["user"]["user_id"]
