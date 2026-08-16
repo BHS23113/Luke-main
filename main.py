@@ -162,6 +162,9 @@ def add_notice():
 
     if len(title) > 50 or len(content) > 500:
         return redirect(url_for("notices"))
+    
+    if content.count("\n") >= 8:
+        return redirect(url_for("notices"))
 
     user_id = session["user"]["user_id"]
 

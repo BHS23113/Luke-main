@@ -167,3 +167,27 @@ function closeDeleteNoticeModal() {
     document.getElementById("deleteNoticeModal").style.display = "none";
 
 }
+
+//  NOTICE LINE LIMIT 
+
+const noticeTextarea = document.querySelector(
+    '#addNoticeModal textarea[name="content"]'
+);
+
+if (noticeTextarea) {
+
+    noticeTextarea.addEventListener("input", function () {
+
+        const maxLines = 8;
+
+        const lines = this.value.split("\n");
+
+        if (lines.length > maxLines) {
+
+            this.value = lines.slice(0, maxLines).join("\n");
+
+        }
+
+    });
+
+}
