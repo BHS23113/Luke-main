@@ -155,6 +155,29 @@ def add_locker_duty():
 
     return redirect(url_for("locker_duty"))
 
+@app.route("/delete-locker-duty/<int:duty_id>", methods=["POST"])
+def delete_locker_duty(duty_id):
+
+    if "user" not in session:
+        return redirect(url_for("index"))
+
+    # Only admins can remove people
+    if session["user"]["role"] != "admin":
+        return render_template("403.html"), 403
+
+    db = get_db()
+    cursor = db.cursor()
+
+    cursor.execute("""
+        DELETE FROM locker_duty
+        WHERE duty_id = ?
+    """, (duty_id,))
+
+    db.commit()
+    db.close()
+
+    return redirect(url_for("locker_duty"))
+
 @app.route("/login", methods=["POST"])
 def login():
 
