@@ -61,39 +61,6 @@ CREATE TABLE IF NOT EXISTS notice_read (
 )
 """)
 
-# ASSEMBLY TABLE
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS assembly (
-    assembly_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    title TEXT NOT NULL,
-    date DATE NOT NULL
-)
-""")
-
-
-# ASSEMBLY IDEA TABLE
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS assembly_idea (
-    idea_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    assembly_id INTEGER NOT NULL,
-    content TEXT NOT NULL,
-    updated_by INTEGER NOT NULL,
-    FOREIGN KEY (assembly_id) REFERENCES assembly(assembly_id) ON DELETE CASCADE,
-    FOREIGN KEY (updated_by) REFERENCES users(user_id) ON DELETE CASCADE
-)
-""")
-
-# RUN SHEET TABLE
-cursor.execute("""
-               
-CREATE TABLE IF NOT EXISTS run_sheet (
-    runsheet_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    assembly_id INTEGER NOT NULL,
-    content TEXT NOT NULL,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (assembly_id) REFERENCES assembly(assembly_id) ON DELETE CASCADE
-)
-""")
 
 connection.commit()
 connection.close()
