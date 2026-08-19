@@ -70,7 +70,7 @@ def locker_duty():
     db = get_db()
     cursor = db.cursor()
 
-    # Get all locker duty assignments
+    # Get locker duty assignments
     cursor.execute("""
         SELECT
             locker_duty.duty_id,
@@ -94,13 +94,66 @@ def locker_duty():
 
     duties = cursor.fetchall()
 
+    # Get active users for the Add Person dropdown
+    cursor.execute("""
+        SELECT user_id, name
+        FROM users
+        WHERE is_active = 1
+        ORDER BY name
+    """)
+
+    users = cursor.fetchall()
+
     db.close()
 
     return render_template(
         "locker_duty.html",
         user=session["user"],
-        duties=duties
+        duties=duties,
+        users=users
     )
+
+@app.route("/add-locker-duty", methods=["POST"])
+def add_locker_duty():
+
+    if "user" not in session:
+        return redirect(url_for("index"))
+
+    # Only admins can modify the roster
+    if session["user"]["role"] != "admin":
+        return render_template("403.html"), 403
+
+    user_id = request.form["user_id"]
+    week = request.form["week"]
+    day = request.form["day"]
+
+    db = get_db()
+    cursor = db.cursor()
+
+    # Check how many people are already assigned
+    cursor.execute("""
+        SELECT COUNT(*)
+        FROM locker_duty
+        WHERE week = ? AND day = ?
+    """, (week, day))
+
+    count = cursor.fetchone()[0]
+
+    # Maximum of 2 people per day
+    if count >= 2:
+        db.close()
+        return "This day already has two people assigned.", 400
+
+    # Add the new duty
+    cursor.execute("""
+        INSERT INTO locker_duty (user_id, week, day)
+        VALUES (?, ?, ?)
+    """, (user_id, week, day))
+
+    db.commit()
+    db.close()
+
+    return redirect(url_for("locker_duty"))
 
 @app.route("/login", methods=["POST"])
 def login():
