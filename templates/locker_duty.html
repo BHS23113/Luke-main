@@ -20,6 +20,8 @@ Locker Duty
 
 </div>
 
+
+
 <!-- ADD PERSON BUTTON -->
 
 
@@ -40,7 +42,9 @@ Locker Duty
 {% endif %}
 
 
+
 <!-- WEEK A -->
+
 
 <div class="roster-section">
 
@@ -70,30 +74,93 @@ Locker Duty
                         {{ day }}
                     </td>
 
+
                     {% set day_duties = duties
                         | selectattr("week", "equalto", "A")
                         | selectattr("day", "equalto", day)
                         | list
                     %}
 
-                    <td>
-                        {% if day_duties|length > 0 %}
-                            {{ day_duties[0].name }}
-                        {% else %}
-                            <span class="unassigned">
-                                Unassigned
-                            </span>
-                        {% endif %}
-                    </td>
+
+                    <!-- PERSON 1 -->
 
                     <td>
-                        {% if day_duties|length > 1 %}
-                            {{ day_duties[1].name }}
-                        {% else %}
-                            <span class="unassigned">
-                                Unassigned
+
+                        {% if day_duties|length > 0 %}
+
+                        <div class="person-cell">
+
+                            <span>
+                                {{ day_duties[0].name }}
                             </span>
+
+
+                            {% if user.role == "admin" %}
+
+                            <button
+                                class="delete-duty-btn"
+                                onclick="openDeleteDutyModal(
+                                    '{{ day_duties[0].duty_id }}',
+                                    {{ day_duties[0].name | tojson }}
+                                )">
+
+                                Delete
+
+                            </button>
+
+                            {% endif %}
+
+                        </div>
+
+                        {% else %}
+
+                        <span class="unassigned">
+                            Unassigned
+                        </span>
+
                         {% endif %}
+
+                    </td>
+
+
+                    <!-- PERSON 2 -->
+
+                    <td>
+
+                        {% if day_duties|length > 1 %}
+
+                        <div class="person-cell">
+
+                            <span>
+                                {{ day_duties[1].name }}
+                            </span>
+
+
+                            {% if user.role == "admin" %}
+
+                            <button
+                                class="delete-duty-btn"
+                                onclick="openDeleteDutyModal(
+                                    '{{ day_duties[1].duty_id }}',
+                                    {{ day_duties[1].name | tojson }}
+                                )">
+
+                                Delete
+
+                            </button>
+
+                            {% endif %}
+
+                        </div>
+
+                        {% else %}
+
+                        <span class="unassigned">
+                            Unassigned
+                        </span>
+
+                        {% endif %}
+
                     </td>
 
                 </tr>
@@ -141,30 +208,93 @@ Locker Duty
                         {{ day }}
                     </td>
 
+
                     {% set day_duties = duties
                         | selectattr("week", "equalto", "B")
                         | selectattr("day", "equalto", day)
                         | list
                     %}
 
-                    <td>
-                        {% if day_duties|length > 0 %}
-                            {{ day_duties[0].name }}
-                        {% else %}
-                            <span class="unassigned">
-                                Unassigned
-                            </span>
-                        {% endif %}
-                    </td>
+
+                    <!-- PERSON 1 -->
 
                     <td>
-                        {% if day_duties|length > 1 %}
-                            {{ day_duties[1].name }}
-                        {% else %}
-                            <span class="unassigned">
-                                Unassigned
+
+                        {% if day_duties|length > 0 %}
+
+                        <div class="person-cell">
+
+                            <span>
+                                {{ day_duties[0].name }}
                             </span>
+
+
+                            {% if user.role == "admin" %}
+
+                            <button
+                                class="delete-duty-btn"
+                                onclick="openDeleteDutyModal(
+                                    '{{ day_duties[0].duty_id }}',
+                                    {{ day_duties[0].name | tojson }}
+                                )">
+
+                                Delete
+
+                            </button>
+
+                            {% endif %}
+
+                        </div>
+
+                        {% else %}
+
+                        <span class="unassigned">
+                            Unassigned
+                        </span>
+
                         {% endif %}
+
+                    </td>
+
+
+                    <!-- PERSON 2 -->
+
+                    <td>
+
+                        {% if day_duties|length > 1 %}
+
+                        <div class="person-cell">
+
+                            <span>
+                                {{ day_duties[1].name }}
+                            </span>
+
+
+                            {% if user.role == "admin" %}
+
+                            <button
+                                class="delete-duty-btn"
+                                onclick="openDeleteDutyModal(
+                                    '{{ day_duties[1].duty_id }}',
+                                    {{ day_duties[1].name | tojson }}
+                                )">
+
+                                Delete
+
+                            </button>
+
+                            {% endif %}
+
+                        </div>
+
+                        {% else %}
+
+                        <span class="unassigned">
+                            Unassigned
+                        </span>
+
+                        {% endif %}
+
                     </td>
 
                 </tr>
@@ -180,6 +310,7 @@ Locker Duty
 </div>
 
 
+
 <!-- ADD LOCKER DUTY MODAL -->
 
 
@@ -192,7 +323,9 @@ Locker Duty
         <h2>Add Locker Duty</h2>
 
 
-        <form action="/add-locker-duty" method="POST">
+        <form
+            action="/add-locker-duty"
+            method="POST">
 
 
             <!-- PERSON -->
@@ -287,6 +420,7 @@ Locker Duty
 
                 </button>
 
+
                 <button
                     type="submit"
                     class="confirm-btn">
@@ -297,8 +431,61 @@ Locker Duty
 
             </div>
 
-
         </form>
+
+    </div>
+
+</div>
+
+{% endif %}
+
+
+
+<!-- DELETE LOCKER DUTY MODAL -->
+
+
+{% if user.role == "admin" %}
+
+<div id="deleteDutyModal" class="modal">
+
+    <div class="modal-content">
+
+        <h2>Remove Locker Duty</h2>
+
+        <p>
+            Are you sure you want to remove
+            <strong id="deleteDutyName"></strong>
+            from this duty?
+        </p>
+
+
+        <div class="modal-actions">
+
+            <button
+                type="button"
+                class="cancel-btn"
+                onclick="closeDeleteDutyModal()">
+
+                Cancel
+
+            </button>
+
+
+            <form
+                id="deleteDutyForm"
+                method="POST">
+
+                <button
+                    type="submit"
+                    class="confirm-delete-btn">
+
+                    Delete
+
+                </button>
+
+            </form>
+
+        </div>
 
     </div>
 

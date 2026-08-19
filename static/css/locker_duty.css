@@ -1,7 +1,6 @@
 
 /* LOCKER DUTY PAGE */
 
-
 .topbar {
     margin-bottom: 25px;
 }
@@ -16,9 +15,7 @@
 }
 
 
-
 /* ACTIONS */
-
 
 .actions {
     margin-bottom: 25px;
@@ -26,7 +23,6 @@
 
 .button {
     background-color: #003d52;
-
     color: white;
 
     border: none;
@@ -47,9 +43,7 @@
 }
 
 
-
 /* ROSTER SECTION */
-
 
 .roster-section {
     margin-bottom: 35px;
@@ -57,14 +51,11 @@
 
 .roster-section h2 {
     margin-bottom: 15px;
-
     color: #003d52;
 }
 
 
-
 /* ROSTER CARD */
-
 
 .roster-card {
     background: white;
@@ -79,13 +70,10 @@
 }
 
 
-
 /* ROSTER TABLE */
-
 
 .roster-card table {
     width: 100%;
-
     border-collapse: collapse;
 }
 
@@ -110,9 +98,7 @@
 }
 
 
-
 /* DAY COLUMN */
-
 
 .roster-card .day {
     width: 25%;
@@ -123,9 +109,20 @@
 }
 
 
+/* PERSON CELL */
+
+.person-cell {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+}
+
 
 /* UNASSIGNED */
-
 
 .unassigned {
     color: #999;
@@ -134,9 +131,32 @@
 }
 
 
+/* DELETE DUTY BUTTON */
 
-/* MODAL */
+.delete-duty-btn {
+    background-color: #dc3545;
 
+    color: white;
+
+    border: none;
+    border-radius: 6px;
+
+    padding: 6px 10px;
+
+    cursor: pointer;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    transition: background-color 0.2s;
+}
+
+.delete-duty-btn:hover {
+    background-color: #b02a37;
+}
+
+
+/* MODALS */
 
 .modal {
     display: none;
@@ -158,9 +178,7 @@
 }
 
 
-
 /* MODAL CONTENT */
-
 
 .modal-content {
     background: white;
@@ -173,6 +191,8 @@
     border-radius: 12px;
 
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+
+    box-sizing: border-box;
 }
 
 .modal-content h2 {
@@ -182,9 +202,16 @@
 }
 
 
+/* MODAL TEXT */
+
+.modal-content p {
+    color: #555;
+
+    line-height: 1.5;
+}
+
 
 /* FORM */
-
 
 .modal-content label {
     display: block;
@@ -222,9 +249,7 @@
 }
 
 
-
 /* MODAL BUTTONS */
-
 
 .modal-actions {
     display: flex;
@@ -235,6 +260,9 @@
 
     margin-top: 25px;
 }
+
+
+/* CANCEL BUTTON */
 
 .cancel-btn {
     background-color: #e5e7eb;
@@ -250,12 +278,16 @@
     cursor: pointer;
 
     font-weight: 600;
+
+    transition: background-color 0.2s;
 }
 
 .cancel-btn:hover {
     background-color: #d1d5db;
 }
 
+
+/* CONFIRM BUTTON */
 
 .confirm-btn {
     background-color: #003d52;
@@ -271,8 +303,69 @@
     cursor: pointer;
 
     font-weight: 600;
+
+    transition: background-color 0.2s;
 }
 
 .confirm-btn:hover {
     background-color: #00566f;
+}
+
+
+/* DELETE CONFIRM BUTTON */
+
+.confirm-delete-btn {
+    background-color: #dc3545;
+
+    color: white;
+
+    border: none;
+
+    border-radius: 8px;
+
+    padding: 10px 18px;
+
+    cursor: pointer;
+
+    font-weight: 600;
+
+    transition: background-color 0.2s;
+}
+
+.confirm-delete-btn:hover {
+    background-color: #b02a37;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+
+    .roster-card {
+        padding: 15px;
+    }
+
+    .roster-card th,
+    .roster-card td {
+        padding: 12px 10px;
+    }
+
+    .person-cell {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 8px;
+    }
+
+    .delete-duty-btn {
+        font-size: 12px;
+
+        padding: 5px 9px;
+    }
+
+    .modal-content {
+        padding: 25px;
+    }
+
 }
