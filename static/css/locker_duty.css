@@ -1,64 +1,106 @@
-h1 {
-    color: #003d52;
-    margin-bottom: 10px;
-    font-size: 2.2rem;
-}
+/* ============================= */
+/* LOCKER DUTY PAGE */
+/* ============================= */
 
-p {
-    color: #555;
+.topbar {
     margin-bottom: 30px;
-    line-height: 1.5;
 }
 
-.container {
-    display: flex;
-    gap: 30px;
+.topbar h1 {
+    margin-bottom: 5px;
 }
 
-.week {
-    flex: 1;
+.topbar p {
+    margin-top: 0;
+    color: #666;
+}
+
+
+/* ============================= */
+/* ROSTER SECTION */
+/* ============================= */
+
+.roster-section {
+    margin-bottom: 35px;
+}
+
+.roster-section h2 {
+    margin-bottom: 15px;
+    color: #003d52;
+}
+
+
+/* ============================= */
+/* ROSTER CARD */
+/* ============================= */
+
+.roster-card {
     background: white;
+
     border-radius: 12px;
-    padding: 20px;
 
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 25px;
+
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+    overflow-x: auto;
 }
 
-.week h2 {
-    background-color: #003d52;
-    color: white;
 
-    text-align: center;
+/* ============================= */
+/* ROSTER TABLE */
+/* ============================= */
 
-    padding: 12px;
-
-    border-radius: 8px;
-
-    margin-bottom: 20px;
-}
-
-table {
+.roster-card table {
     width: 100%;
+
     border-collapse: collapse;
 }
 
-th {
-    background-color: #f5f5f5;
-    color: #003d52;
-
+.roster-card th {
     text-align: left;
 
-    padding: 12px;
+    padding: 14px 16px;
 
-    border-bottom: 2px solid #ddd;
+    background-color: #f5f7f8;
+
+    color: #003d52;
+
+    font-weight: 600;
 }
 
-td {
-    padding: 12px;
-    border-bottom: 1px solid #eee;
+.roster-card td {
+    padding: 16px;
+
+    border-top: 1px solid #eee;
+
     color: #333;
 }
 
-tr:hover td {
-    background-color: #f7f7f7;
+.roster-card tr:first-child td {
+    border-top: none;
+}
+
+
+/* ============================= */
+/* DAY */
+/* ============================= */
+
+.roster-card .day {
+    font-weight: 600;
+
+    color: #003d52;
+
+    width: 25%;
+}
+
+
+/* ============================= */
+/* UNASSIGNED */
+/* ============================= */
+
+.unassigned {
+    color: #999;
+
+    font-style: italic;
 }

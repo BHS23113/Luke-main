@@ -10,97 +10,149 @@ Locker Duty
 
 {% block content %}
 
-<h1>Locker Duty Roster</h1>
+<div class="topbar">
 
-<p>
-    Lock the side doors on arrival - there will be staff on duty to assist.<br>
-    Monitor student behaviour.
-</p>
+    <h1>Locker Duty</h1>
 
-<div class="container">
+    <p>
+        Manage the prefect locker duty roster.
+    </p>
 
-    <!-- WEEK A -->
-    <div class="week">
+</div>
 
-        <h2>WEEK A</h2>
 
-        <table>
+<!-- ============================= -->
+<!-- WEEK A -->
+<!-- ============================= -->
 
-            <tr>
-                <th>Day</th>
-                <th>Students</th>
-            </tr>
+<div class="roster-section">
 
-            <tr>
-                <td>Monday</td>
-                <td>Elizabeth, Rosie</td>
-            </tr>
+    <h2>Week A</h2>
 
-            <tr>
-                <td>Tuesday</td>
-                <td>Barnaby, Samuel</td>
-            </tr>
-
-            <tr>
-                <td>Wednesday</td>
-                <td>Ava, Dasha</td>
-            </tr>
-
-            <tr>
-                <td>Thursday</td>
-                <td>Sione, Michaela</td>
-            </tr>
-
-            <tr>
-                <td>Friday</td>
-                <td>James, Luke</td>
-            </tr>
-
-        </table>
-
-    </div>
-
-    <!-- WEEK B -->
-    <div class="week">
-
-        <h2>WEEK B</h2>
+    <div class="roster-card">
 
         <table>
 
-            <tr>
-                <th>Day</th>
-                <th>Students</th>
-            </tr>
+            <thead>
 
-            <tr>
-                <td>Monday</td>
-                <td>Zoe, Chloe</td>
-            </tr>
+                <tr>
+                    <th>Day</th>
+                    <th>Person 1</th>
+                    <th>Person 2</th>
+                </tr>
 
-            <tr>
-                <td>Tuesday</td>
-                <td>Kanon, Ida</td>
-            </tr>
+            </thead>
 
-            <tr>
-                <td>Wednesday</td>
-                <td>Lukas, Messi</td>
-            </tr>
+            <tbody>
 
-            <tr>
-                <td>Thursday</td>
-                <td>Sho, Aaron</td>
-            </tr>
+                {% for day in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"] %}
 
-            <tr>
-                <td>Friday</td>
-                <td>Eason, Nilana</td>
-            </tr>
+                <tr>
+
+                    <td class="day">
+                        {{ day }}
+                    </td>
+
+                    {% set day_duties = duties
+                        | selectattr("week", "equalto", "A")
+                        | selectattr("day", "equalto", day)
+                        | list
+                    %}
+
+                    <td>
+                        {% if day_duties|length > 0 %}
+                            {{ day_duties[0].name }}
+                        {% else %}
+                            <span class="unassigned">Unassigned</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if day_duties|length > 1 %}
+                            {{ day_duties[1].name }}
+                        {% else %}
+                            <span class="unassigned">Unassigned</span>
+                        {% endif %}
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
 
         </table>
 
     </div>
 
 </div>
+
+
+<!-- ============================= -->
+<!-- WEEK B -->
+<!-- ============================= -->
+
+<div class="roster-section">
+
+    <h2>Week B</h2>
+
+    <div class="roster-card">
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>Day</th>
+                    <th>Person 1</th>
+                    <th>Person 2</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                {% for day in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"] %}
+
+                <tr>
+
+                    <td class="day">
+                        {{ day }}
+                    </td>
+
+                    {% set day_duties = duties
+                        | selectattr("week", "equalto", "B")
+                        | selectattr("day", "equalto", day)
+                        | list
+                    %}
+
+                    <td>
+                        {% if day_duties|length > 0 %}
+                            {{ day_duties[0].name }}
+                        {% else %}
+                            <span class="unassigned">Unassigned</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if day_duties|length > 1 %}
+                            {{ day_duties[1].name }}
+                        {% else %}
+                            <span class="unassigned">Unassigned</span>
+                        {% endif %}
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
 
 {% endblock %}
