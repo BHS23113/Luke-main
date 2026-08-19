@@ -191,3 +191,14 @@ if (noticeTextarea) {
     });
 
 }
+
+
+// ADD LOCKER DUTY MODAL
+
+function openAddDutyModal() {
+    document.getElementById("addDutyModal").style.display = "flex";
+}
+
+function closeAddDutyModal() {
+    document.getElementById("addDutyModal").style.display = "none";
+}
