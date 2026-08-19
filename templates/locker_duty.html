@@ -22,6 +22,27 @@ Locker Duty
 
 
 <!-- ============================= -->
+<!-- ADD PERSON BUTTON -->
+<!-- ============================= -->
+
+{% if user.role == "admin" %}
+
+<div class="actions">
+
+    <button
+        class="button"
+        onclick="openAddDutyModal()">
+
+        + Add Person
+
+    </button>
+
+</div>
+
+{% endif %}
+
+
+<!-- ============================= -->
 <!-- WEEK A -->
 <!-- ============================= -->
 
@@ -63,7 +84,9 @@ Locker Duty
                         {% if day_duties|length > 0 %}
                             {{ day_duties[0].name }}
                         {% else %}
-                            <span class="unassigned">Unassigned</span>
+                            <span class="unassigned">
+                                Unassigned
+                            </span>
                         {% endif %}
                     </td>
 
@@ -71,7 +94,9 @@ Locker Duty
                         {% if day_duties|length > 1 %}
                             {{ day_duties[1].name }}
                         {% else %}
-                            <span class="unassigned">Unassigned</span>
+                            <span class="unassigned">
+                                Unassigned
+                            </span>
                         {% endif %}
                     </td>
 
@@ -130,7 +155,9 @@ Locker Duty
                         {% if day_duties|length > 0 %}
                             {{ day_duties[0].name }}
                         {% else %}
-                            <span class="unassigned">Unassigned</span>
+                            <span class="unassigned">
+                                Unassigned
+                            </span>
                         {% endif %}
                     </td>
 
@@ -138,7 +165,9 @@ Locker Duty
                         {% if day_duties|length > 1 %}
                             {{ day_duties[1].name }}
                         {% else %}
-                            <span class="unassigned">Unassigned</span>
+                            <span class="unassigned">
+                                Unassigned
+                            </span>
                         {% endif %}
                     </td>
 
@@ -153,6 +182,134 @@ Locker Duty
     </div>
 
 </div>
+
+
+<!-- ============================= -->
+<!-- ADD LOCKER DUTY MODAL -->
+<!-- ============================= -->
+
+{% if user.role == "admin" %}
+
+<div id="addDutyModal" class="modal">
+
+    <div class="modal-content">
+
+        <h2>Add Locker Duty</h2>
+
+
+        <form action="/add-locker-duty" method="POST">
+
+
+            <!-- PERSON -->
+
+            <label>
+                Person
+            </label>
+
+            <select
+                name="user_id"
+                required>
+
+                <option value="">
+                    Select a person
+                </option>
+
+                {% for member in users %}
+
+                <option value="{{ member.user_id }}">
+                    {{ member.name }}
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+
+            <!-- WEEK -->
+
+            <label>
+                Week
+            </label>
+
+            <select
+                name="week"
+                required>
+
+                <option value="A">
+                    Week A
+                </option>
+
+                <option value="B">
+                    Week B
+                </option>
+
+            </select>
+
+
+            <!-- DAY -->
+
+            <label>
+                Day
+            </label>
+
+            <select
+                name="day"
+                required>
+
+                <option value="Monday">
+                    Monday
+                </option>
+
+                <option value="Tuesday">
+                    Tuesday
+                </option>
+
+                <option value="Wednesday">
+                    Wednesday
+                </option>
+
+                <option value="Thursday">
+                    Thursday
+                </option>
+
+                <option value="Friday">
+                    Friday
+                </option>
+
+            </select>
+
+
+            <!-- BUTTONS -->
+
+            <div class="modal-actions">
+
+                <button
+                    type="button"
+                    class="cancel-btn"
+                    onclick="closeAddDutyModal()">
+
+                    Cancel
+
+                </button>
+
+                <button
+                    type="submit"
+                    class="confirm-btn">
+
+                    Add Person
+
+                </button>
+
+            </div>
+
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endif %}
 
 
 {% endblock %}
