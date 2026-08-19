@@ -3,7 +3,11 @@ import sqlite3
 connection = sqlite3.connect("prefectconnect.db")
 cursor = connection.cursor()
 
+
+# ==============================
 # USERS TABLE
+# ==============================
+
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS users (
     user_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -14,28 +18,26 @@ CREATE TABLE IF NOT EXISTS users (
 )
 """)
 
+
+# ==============================
 # LOCKER DUTY TABLE
+# ==============================
+
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS locker_duty (
     duty_id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
-    duty_date DATE NOT NULL,
+    week TEXT NOT NULL,
+    day TEXT NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 )
 """)
 
-# MESSAGE POST TABLE
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS message_post (
-    post_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER NOT NULL,
-    content TEXT NOT NULL,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
-)
-""")
 
+# ==============================
 # NOTICE TABLE
+# ==============================
+
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS notice (
     notice_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -48,7 +50,11 @@ CREATE TABLE IF NOT EXISTS notice (
 )
 """)
 
+
+# ==============================
 # NOTICE READ TABLE
+# ==============================
+
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS notice_read (
     read_id INTEGER PRIMARY KEY AUTOINCREMENT,
