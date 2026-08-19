@@ -21,9 +21,7 @@ Locker Duty
 </div>
 
 
-
 <!-- ADD PERSON BUTTON -->
-
 
 {% if user.role == "admin" %}
 
@@ -42,9 +40,7 @@ Locker Duty
 {% endif %}
 
 
-
 <!-- WEEK A -->
-
 
 <div class="roster-section">
 
@@ -94,15 +90,15 @@ Locker Duty
                                 {{ day_duties[0].name }}
                             </span>
 
-
                             {% if user.role == "admin" %}
 
                             <button
+                                type="button"
                                 class="delete-duty-btn"
-                                onclick="openDeleteDutyModal(
-                                    '{{ day_duties[0].duty_id }}',
+                                onclick='openDeleteDutyModal(
+                                    "{{ day_duties[0].duty_id }}",
                                     {{ day_duties[0].name | tojson }}
-                                )">
+                                )'>
 
                                 Delete
 
@@ -135,15 +131,15 @@ Locker Duty
                                 {{ day_duties[1].name }}
                             </span>
 
-
                             {% if user.role == "admin" %}
 
                             <button
+                                type="button"
                                 class="delete-duty-btn"
-                                onclick="openDeleteDutyModal(
-                                    '{{ day_duties[1].duty_id }}',
+                                onclick='openDeleteDutyModal(
+                                    "{{ day_duties[1].duty_id }}",
                                     {{ day_duties[1].name | tojson }}
-                                )">
+                                )'>
 
                                 Delete
 
@@ -176,9 +172,7 @@ Locker Duty
 </div>
 
 
-
 <!-- WEEK B -->
-
 
 <div class="roster-section">
 
@@ -228,15 +222,15 @@ Locker Duty
                                 {{ day_duties[0].name }}
                             </span>
 
-
                             {% if user.role == "admin" %}
 
                             <button
+                                type="button"
                                 class="delete-duty-btn"
-                                onclick="openDeleteDutyModal(
-                                    '{{ day_duties[0].duty_id }}',
+                                onclick='openDeleteDutyModal(
+                                    "{{ day_duties[0].duty_id }}",
                                     {{ day_duties[0].name | tojson }}
-                                )">
+                                )'>
 
                                 Delete
 
@@ -269,15 +263,15 @@ Locker Duty
                                 {{ day_duties[1].name }}
                             </span>
 
-
                             {% if user.role == "admin" %}
 
                             <button
+                                type="button"
                                 class="delete-duty-btn"
-                                onclick="openDeleteDutyModal(
-                                    '{{ day_duties[1].duty_id }}',
+                                onclick='openDeleteDutyModal(
+                                    "{{ day_duties[1].duty_id }}",
                                     {{ day_duties[1].name | tojson }}
-                                )">
+                                )'>
 
                                 Delete
 
@@ -310,9 +304,7 @@ Locker Duty
 </div>
 
 
-
 <!-- ADD LOCKER DUTY MODAL -->
-
 
 {% if user.role == "admin" %}
 
@@ -322,13 +314,9 @@ Locker Duty
 
         <h2>Add Locker Duty</h2>
 
-
         <form
             action="/add-locker-duty"
             method="POST">
-
-
-            <!-- PERSON -->
 
             <label>
                 Person
@@ -353,8 +341,6 @@ Locker Duty
             </select>
 
 
-            <!-- WEEK -->
-
             <label>
                 Week
             </label>
@@ -373,8 +359,6 @@ Locker Duty
 
             </select>
 
-
-            <!-- DAY -->
 
             <label>
                 Day
@@ -407,8 +391,6 @@ Locker Duty
             </select>
 
 
-            <!-- BUTTONS -->
-
             <div class="modal-actions">
 
                 <button
@@ -419,7 +401,6 @@ Locker Duty
                     Cancel
 
                 </button>
-
 
                 <button
                     type="submit"
@@ -440,9 +421,7 @@ Locker Duty
 {% endif %}
 
 
-
 <!-- DELETE LOCKER DUTY MODAL -->
-
 
 {% if user.role == "admin" %}
 
@@ -492,6 +471,5 @@ Locker Duty
 </div>
 
 {% endif %}
-
 
 {% endblock %}
