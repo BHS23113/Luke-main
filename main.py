@@ -67,7 +67,40 @@ def locker_duty():
     if "user" not in session:
         return redirect(url_for("index"))
 
-    return render_template("locker_duty.html", user=session["user"])
+    db = get_db()
+    cursor = db.cursor()
+
+    # Get all locker duty assignments
+    cursor.execute("""
+        SELECT
+            locker_duty.duty_id,
+            locker_duty.user_id,
+            locker_duty.week,
+            locker_duty.day,
+            users.name
+        FROM locker_duty
+        JOIN users
+            ON locker_duty.user_id = users.user_id
+        ORDER BY
+            locker_duty.week,
+            CASE locker_duty.day
+                WHEN 'Monday' THEN 1
+                WHEN 'Tuesday' THEN 2
+                WHEN 'Wednesday' THEN 3
+                WHEN 'Thursday' THEN 4
+                WHEN 'Friday' THEN 5
+            END
+    """)
+
+    duties = cursor.fetchall()
+
+    db.close()
+
+    return render_template(
+        "locker_duty.html",
+        user=session["user"],
+        duties=duties
+    )
 
 @app.route("/login", methods=["POST"])
 def login():
