@@ -101,35 +101,40 @@ function closeRoleModal() {
 }
 
 
-// CLOSE MODALS  
+// CLOSE MODALS
 
 window.addEventListener("click", function(event) {
 
     const deleteModal = document.getElementById("deleteModal");
-
     const addUserModal = document.getElementById("addUserModal");
-
     const roleModal = document.getElementById("roleModal");
+
+    const addDutyModal = document.getElementById("addDutyModal");
+    const deleteDutyModal = document.getElementById("deleteDutyModal");
 
 
     if (deleteModal && event.target === deleteModal) {
-
         closeDeleteModal();
-
     }
 
 
     if (addUserModal && event.target === addUserModal) {
-
         closeAddUserModal();
-
     }
 
 
     if (roleModal && event.target === roleModal) {
-
         closeRoleModal();
+    }
 
+
+    if (addDutyModal && event.target === addDutyModal) {
+        closeAddDutyModal();
+    }
+
+
+    if (deleteDutyModal && event.target === deleteDutyModal) {
+        closeDeleteDutyModal();
     }
 
 });
@@ -201,4 +206,43 @@ function openAddDutyModal() {
 
 function closeAddDutyModal() {
     document.getElementById("addDutyModal").style.display = "none";
+}
+
+// DELETE LOCKER DUTY MODAL
+
+function openDeleteDutyModal(dutyId, name) {
+
+    document.getElementById("deleteDutyName").textContent = name;
+
+    document.getElementById("deleteDutyForm").action =
+        "/delete-locker-duty/" + dutyId;
+
+    document.getElementById("deleteDutyModal").style.display = "flex";
+}
+
+
+function closeDeleteDutyModal() {
+
+    document.getElementById("deleteDutyModal").style.display = "none";
+}
+
+console.log("LOCKER DUTY DELETE JS LOADED");
+
+function openDeleteDutyModal(dutyId, name) {
+
+    console.log("DELETE BUTTON CLICKED");
+    console.log("Duty ID:", dutyId);
+    console.log("Name:", name);
+
+    document.getElementById("deleteDutyName").textContent = name;
+
+    document.getElementById("deleteDutyForm").action =
+        "/delete-locker-duty/" + dutyId;
+
+    document.getElementById("deleteDutyModal").style.display = "flex";
+}
+
+function closeDeleteDutyModal() {
+
+    document.getElementById("deleteDutyModal").style.display = "none";
 }
