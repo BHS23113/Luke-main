@@ -357,11 +357,13 @@ def gmail_authorize():
 
     authorization_url, state = flow.authorization_url(
         access_type="offline",
-        include_granted_scopes="true",
         prompt="consent"
     )
 
+    # Save OAuth information so the callback can recreate
+    # the exact same OAuth flow
     session["gmail_state"] = state
+    session["gmail_code_verifier"] = flow.code_verifier
 
     return redirect(authorization_url)
 
@@ -377,6 +379,9 @@ def gmail_callback():
 
     flow = create_flow()
 
+    # Restore the code verifier generated during /gmail/authorize
+    flow.code_verifier = session.get("gmail_code_verifier")
+
     flow.fetch_token(
         authorization_response=request.url
     )
@@ -385,6 +390,10 @@ def gmail_callback():
 
     with open("gmail_token.json", "w") as token:
         token.write(credentials.to_json())
+
+    # Remove temporary OAuth data
+    session.pop("gmail_state", None)
+    session.pop("gmail_code_verifier", None)
 
     return """
         <h1>Gmail Connected!</h1>
