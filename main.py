@@ -130,22 +130,68 @@ def add_locker_duty():
     db = get_db()
     cursor = db.cursor()
 
-    # Check if this person is already assigned to this exact day
+    # Check if this person is already assigned to this day
     cursor.execute("""
-        SELECT *
+        SELECT users.name
         FROM locker_duty
-        WHERE user_id = ?
-        AND week = ?
-        AND day = ?
+        JOIN users
+            ON locker_duty.user_id = users.user_id
+        WHERE locker_duty.user_id = ?
+        AND locker_duty.week = ?
+        AND locker_duty.day = ?
     """, (user_id, week, day))
 
     existing_duty = cursor.fetchone()
 
     if existing_duty:
-        db.close()
-        return redirect(url_for("locker_duty"))
 
-    # Check how many people are already assigned
+        error = f"{existing_duty['name']} is already assigned to {day}, Week {week}."
+
+        # Get duties again
+        cursor.execute("""
+            SELECT
+                locker_duty.duty_id,
+                locker_duty.user_id,
+                locker_duty.week,
+                locker_duty.day,
+                users.name
+            FROM locker_duty
+            JOIN users
+                ON locker_duty.user_id = users.user_id
+            ORDER BY
+                locker_duty.week,
+                CASE locker_duty.day
+                    WHEN 'Monday' THEN 1
+                    WHEN 'Tuesday' THEN 2
+                    WHEN 'Wednesday' THEN 3
+                    WHEN 'Thursday' THEN 4
+                    WHEN 'Friday' THEN 5
+                END
+        """)
+
+        duties = cursor.fetchall()
+
+        # Get users again
+        cursor.execute("""
+            SELECT user_id, name
+            FROM users
+            WHERE is_active = 1
+            ORDER BY name
+        """)
+
+        users = cursor.fetchall()
+
+        db.close()
+
+        return render_template(
+            "locker_duty.html",
+            user=session["user"],
+            duties=duties,
+            users=users,
+            error=error
+        )
+
+    # Check if the day already has two people
     cursor.execute("""
         SELECT COUNT(*)
         FROM locker_duty
@@ -154,10 +200,53 @@ def add_locker_duty():
 
     count = cursor.fetchone()[0]
 
-    # Maximum of 2 people per day
     if count >= 2:
+
+        error = f"{day}, Week {week} already has two people assigned."
+
+        # Get duties again
+        cursor.execute("""
+            SELECT
+                locker_duty.duty_id,
+                locker_duty.user_id,
+                locker_duty.week,
+                locker_duty.day,
+                users.name
+            FROM locker_duty
+            JOIN users
+                ON locker_duty.user_id = users.user_id
+            ORDER BY
+                locker_duty.week,
+                CASE locker_duty.day
+                    WHEN 'Monday' THEN 1
+                    WHEN 'Tuesday' THEN 2
+                    WHEN 'Wednesday' THEN 3
+                    WHEN 'Thursday' THEN 4
+                    WHEN 'Friday' THEN 5
+                END
+        """)
+
+        duties = cursor.fetchall()
+
+        # Get users again
+        cursor.execute("""
+            SELECT user_id, name
+            FROM users
+            WHERE is_active = 1
+            ORDER BY name
+        """)
+
+        users = cursor.fetchall()
+
         db.close()
-        return redirect(url_for("locker_duty"))
+
+        return render_template(
+            "locker_duty.html",
+            user=session["user"],
+            duties=duties,
+            users=users,
+            error=error
+        )
 
     # Add the new duty
     cursor.execute("""
