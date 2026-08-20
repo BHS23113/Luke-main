@@ -28,6 +28,31 @@ def get_db():
     conn.row_factory = sqlite3.Row
     return conn
 
+from datetime import datetime, timedelta
+
+
+# SCHOOL WEEK CONFIGURATION
+
+WEEK_A_START = datetime(2026, 8, 10)
+
+
+def get_school_week(date):
+
+    # Find the Monday of the week containing this date
+    monday = date - timedelta(days=date.weekday())
+
+    # Calculate how many weeks have passed since Week A started
+    weeks_since_start = (
+        monday.date() - WEEK_A_START.date()
+    ).days // 7
+
+    # Even = Week A
+    # Odd = Week B
+    if weeks_since_start % 2 == 0:
+        return "A"
+
+    return "B"
+
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
