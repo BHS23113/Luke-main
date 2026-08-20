@@ -4,3 +4,4 @@
 .env
 *.db
 *.exe
+__pycache__/
