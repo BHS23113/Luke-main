@@ -857,8 +857,8 @@ if __name__ == "__main__":
         send_locker_duty_reminders,
         "cron",
         day_of_week="mon-fri",
-        hour=4,
-        minute=41
+        hour=16,
+        minute=0
     )
 
     scheduler.start()
