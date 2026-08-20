@@ -451,10 +451,6 @@ PrefectConnect
 
     db.close()
 
-    print(
-        f"Locker duty reminder sent to "
-        f"{assignment['name']} ({assignment['email']})"
-    )
 
 @app.route("/send-tomorrow-reminders")
 def send_tomorrow_reminders():
