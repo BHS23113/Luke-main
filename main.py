@@ -862,7 +862,7 @@ if __name__ == "__main__":
         "cron",
         day_of_week="mon-fri",
         hour=4,
-        minute=35
+        minute=41
     )
 
     scheduler.start()
