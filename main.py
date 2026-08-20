@@ -286,6 +286,85 @@ def delete_locker_duty(duty_id):
 
     return redirect(url_for("locker_duty"))
 
+@app.route("/send-tomorrow-reminders")
+def send_tomorrow_reminders():
+
+    if "user" not in session:
+        return redirect(url_for("index"))
+
+    # Only admins can send reminder emails
+    if session["user"]["role"] != "admin":
+        return render_template("403.html"), 403
+
+    from datetime import datetime, timedelta
+
+    # Get tomorrow's day
+    tomorrow = datetime.now() + timedelta(days=1)
+    tomorrow_day = tomorrow.strftime("%A")
+
+    # Work out which week we're currently in
+    # TODO: Replace this with your actual Week A/B calendar system later.
+    current_week = session.get("current_week", "A")
+
+    db = get_db()
+    cursor = db.cursor()
+
+    cursor.execute("""
+        SELECT
+            users.name,
+            users.email,
+            locker_duty.week,
+            locker_duty.day
+        FROM locker_duty
+        JOIN users
+            ON locker_duty.user_id = users.user_id
+        WHERE locker_duty.week = ?
+        AND locker_duty.day = ?
+    """, (current_week, tomorrow_day))
+
+    assignments = cursor.fetchall()
+
+    db.close()
+
+    if not assignments:
+        return f"""
+            <h1>No Locker Duty Tomorrow</h1>
+            <p>There are no assignments for {tomorrow_day}, Week {current_week}.</p>
+            <a href="/dashboard">Return to Dashboard</a>
+        """
+
+    sent = []
+
+    for assignment in assignments:
+
+        send_email(
+            assignment["email"],
+            "PrefectConnect - Locker Duty Reminder",
+            f"""Hi {assignment["name"]},
+
+This is a reminder that you have locker duty tomorrow.
+
+Day: {assignment["day"]}
+Week: {assignment["week"]}
+
+Please remember to attend your locker duty.
+
+Thanks,
+PrefectConnect
+"""
+        )
+
+        sent.append(assignment["name"])
+
+    return f"""
+        <h1>Reminder Emails Sent!</h1>
+        <p>Emails were sent to:</p>
+        <ul>
+            {''.join(f"<li>{name}</li>" for name in sent)}
+        </ul>
+        <a href="/dashboard">Return to Dashboard</a>
+    """
+
 @app.route("/login", methods=["POST"])
 def login():
 
