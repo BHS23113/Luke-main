@@ -391,7 +391,7 @@ def send_tomorrow_reminders():
             "PrefectConnect - Locker Duty Reminder",
             f"""Hi {assignment["name"]},
 
-This is a reminder that you have locker duty tomorrow.
+This is a reminder that you have locker duty coming up.
 
 Day: {assignment["day"]}
 Week: {assignment["week"]}
