@@ -1,4 +1,5 @@
 import os
+os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 import base64
 from email.message import EmailMessage
 
