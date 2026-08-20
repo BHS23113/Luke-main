@@ -307,7 +307,7 @@ Locker Duty
 
 {% if user.role == "admin" %}
 
-<div id="addDutyModal" class="modal">
+<div id="addDutyModal" class="modal {% if error %}show-modal{% endif %}">
 
     <div class="modal-content">
 

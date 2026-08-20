@@ -390,3 +390,9 @@
     }
 
 }
+
+/* SHOW ADD DUTY MODAL WHEN THERE IS AN ERROR */
+
+.modal.show-modal {
+    display: flex;
+}
