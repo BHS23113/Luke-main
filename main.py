@@ -360,6 +360,25 @@ def send_locker_duty_reminders():
 
     assignments = cursor.fetchall()
 
+    print("========== REMINDER RUN ==========")
+    print("Assignments found:", len(assignments))
+
+    for assignment in assignments:
+        print(
+            "USER:",
+            assignment["user_id"],
+            "| NAME:",
+            assignment["name"],
+            "| EMAIL:",
+            assignment["email"],
+            "| WEEK:",
+            assignment["week"],
+            "| DAY:",
+            assignment["day"]
+        )
+
+    print("==================================")
+
     if not assignments:
         db.close()
 
