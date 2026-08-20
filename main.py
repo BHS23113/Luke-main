@@ -835,6 +835,17 @@ def logout():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
 
-    
+    scheduler = BackgroundScheduler()
+
+    scheduler.add_job(
+        send_locker_duty_reminders,
+        "cron",
+        day_of_week="mon-fri",
+        hour=16,
+        minute=0
+    )
+
+    scheduler.start()
+
+    app.run(debug=True, use_reloader=False)
