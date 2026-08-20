@@ -7,6 +7,8 @@ import os
 
 from gmail import create_flow
 
+from gmail import send_email
+
 print("Hello, World!")
 
 load_dotenv(override=True)
@@ -644,6 +646,27 @@ def edit_role(user_id):
     db.close()
 
     return redirect(url_for("users")) 
+
+@app.route("/test-email")
+def test_email():
+
+    if "user" not in session:
+        return redirect(url_for("index"))
+
+    if session["user"]["role"] != "admin":
+        return render_template("403.html"), 403
+
+    send_email(
+        "lukegvsicloud@gmail.com",
+        "PrefectConnect Test Email",
+        "This is a test email sent from PrefectConnect."
+    )
+
+    return """
+        <h1>Email Sent!</h1>
+        <p>The test email was successfully sent.</p>
+        <a href="/dashboard">Return to Dashboard</a>
+    """
     
 @app.route("/403")
 def forbidden():
