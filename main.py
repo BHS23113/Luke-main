@@ -4,6 +4,7 @@ from google.auth.transport import requests as grequests
 from dotenv import load_dotenv
 import sqlite3
 import os
+
 from gmail import create_flow
 
 print("Hello, World!")
@@ -340,6 +341,56 @@ def login():
             "status": "error",
             "message": str(e)
         }), 401
+    
+# GMAIL AUTHORISATION
+
+@app.route("/gmail/authorize")
+def gmail_authorize():
+
+    if "user" not in session:
+        return redirect(url_for("index"))
+
+    if session["user"]["role"] != "admin":
+        return render_template("403.html"), 403
+
+    flow = create_flow()
+
+    authorization_url, state = flow.authorization_url(
+        access_type="offline",
+        include_granted_scopes="true",
+        prompt="consent"
+    )
+
+    session["gmail_state"] = state
+
+    return redirect(authorization_url)
+
+
+@app.route("/gmail/callback")
+def gmail_callback():
+
+    if "user" not in session:
+        return redirect(url_for("index"))
+
+    if session["user"]["role"] != "admin":
+        return render_template("403.html"), 403
+
+    flow = create_flow()
+
+    flow.fetch_token(
+        authorization_response=request.url
+    )
+
+    credentials = flow.credentials
+
+    with open("gmail_token.json", "w") as token:
+        token.write(credentials.to_json())
+
+    return """
+        <h1>Gmail Connected!</h1>
+        <p>PrefectConnect can now send emails.</p>
+        <a href="/dashboard">Return to Dashboard</a>
+    """
 
 @app.route("/assemblies")
 def assemblies():
