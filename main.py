@@ -321,33 +321,24 @@ def delete_locker_duty(duty_id):
 
     return redirect(url_for("locker_duty"))
 
-@app.route("/send-tomorrow-reminders")
-def send_tomorrow_reminders():
-
-    if "user" not in session:
-        return redirect(url_for("index"))
-
-    if session["user"]["role"] != "admin":
-        return render_template("403.html"), 403
+def send_locker_duty_reminders():
 
     today = datetime.now()
 
     # Find the next school day
-    if today.weekday() == 4:  # Friday
+    if today.weekday() == 4:       # Friday
         next_duty_date = today + timedelta(days=3)
 
-    elif today.weekday() == 5:  # Saturday
+    elif today.weekday() == 5:     # Saturday
         next_duty_date = today + timedelta(days=2)
 
-    elif today.weekday() == 6:  # Sunday
+    elif today.weekday() == 6:     # Sunday
         next_duty_date = today + timedelta(days=1)
 
-    else:
-        # Monday → Thursday
+    else:                          # Monday - Thursday
         next_duty_date = today + timedelta(days=1)
 
     next_day = next_duty_date.strftime("%A")
-
     next_week = get_school_week(next_duty_date)
 
     db = get_db()
@@ -371,20 +362,11 @@ def send_tomorrow_reminders():
     db.close()
 
     if not assignments:
-        return f"""
-            <h1>No Locker Duty</h1>
-
-            <p>
-                No locker duty assignments were found for
-                {next_day}, Week {next_week}.
-            </p>
-
-            <a href="/dashboard">
-                Return to Dashboard
-            </a>
-        """
-
-    sent = []
+        print(
+            f"No locker duty assignments found for "
+            f"{next_day}, Week {next_week}."
+        )
+        return
 
     for assignment in assignments:
 
@@ -405,19 +387,28 @@ PrefectConnect
 """
         )
 
-        sent.append(assignment["name"])
+        print(
+            f"Locker duty reminder sent to "
+            f"{assignment['name']} ({assignment['email']})"
+        )
 
-    return f"""
-        <h1>Reminder Emails Sent!</h1>
+@app.route("/send-tomorrow-reminders")
+def send_tomorrow_reminders():
+
+    if "user" not in session:
+        return redirect(url_for("index"))
+
+    if session["user"]["role"] != "admin":
+        return render_template("403.html"), 403
+
+    send_locker_duty_reminders()
+
+    return """
+        <h1>Locker Duty Reminders Sent!</h1>
 
         <p>
-            Reminder emails were sent for
-            {next_day}, Week {next_week}.
+            The reminder system has been run successfully.
         </p>
-
-        <ul>
-            {''.join(f"<li>{name}</li>" for name in sent)}
-        </ul>
 
         <a href="/dashboard">
             Return to Dashboard
