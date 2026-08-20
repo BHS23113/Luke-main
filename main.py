@@ -130,6 +130,21 @@ def add_locker_duty():
     db = get_db()
     cursor = db.cursor()
 
+    # Check if this person is already assigned to this exact day
+    cursor.execute("""
+        SELECT *
+        FROM locker_duty
+        WHERE user_id = ?
+        AND week = ?
+        AND day = ?
+    """, (user_id, week, day))
+
+    existing_duty = cursor.fetchone()
+
+    if existing_duty:
+        db.close()
+        return redirect(url_for("locker_duty"))
+
     # Check how many people are already assigned
     cursor.execute("""
         SELECT COUNT(*)
@@ -142,7 +157,7 @@ def add_locker_duty():
     # Maximum of 2 people per day
     if count >= 2:
         db.close()
-        return "This day already has two people assigned.", 400
+        return redirect(url_for("locker_duty"))
 
     # Add the new duty
     cursor.execute("""
