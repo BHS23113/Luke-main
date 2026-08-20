@@ -346,6 +346,7 @@ def send_locker_duty_reminders():
 
     cursor.execute("""
         SELECT
+            users.user_id,
             users.name,
             users.email,
             locker_duty.week,
@@ -359,16 +360,38 @@ def send_locker_duty_reminders():
 
     assignments = cursor.fetchall()
 
-    db.close()
-
     if not assignments:
+        db.close()
+
         print(
             f"No locker duty assignments found for "
             f"{next_day}, Week {next_week}."
         )
+
         return
 
     for assignment in assignments:
+
+        duty_date = next_duty_date.strftime("%Y-%m-%d")
+
+        cursor.execute("""
+            SELECT id
+            FROM reminder_log
+            WHERE user_id = ?
+            AND duty_date = ?
+        """, (
+            assignment["user_id"],
+            duty_date
+        ))
+
+        already_sent = cursor.fetchone()
+
+        if already_sent:
+            print(
+                f"Reminder already sent to "
+                f"{assignment['name']} for {duty_date}"
+            )
+            continue
 
         send_email(
             assignment["email"],
@@ -387,10 +410,32 @@ PrefectConnect
 """
         )
 
+        cursor.execute("""
+            INSERT INTO reminder_log (
+                user_id,
+                duty_date,
+                sent_at
+            )
+            VALUES (?, ?, ?)
+        """, (
+            assignment["user_id"],
+            duty_date,
+            datetime.now().isoformat()
+        ))
+
+        db.commit()
+
         print(
             f"Locker duty reminder sent to "
             f"{assignment['name']} ({assignment['email']})"
         )
+
+    db.close()
+
+    print(
+        f"Locker duty reminder sent to "
+        f"{assignment['name']} ({assignment['email']})"
+    )
 
 @app.route("/send-tomorrow-reminders")
 def send_tomorrow_reminders():
