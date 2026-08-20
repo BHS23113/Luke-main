@@ -27,12 +27,17 @@ CLIENT_CONFIG = {
 
 def create_flow():
 
+    print("GMAIL CLIENT ID LOADED:", bool(os.getenv("GOOGLE_CLIENT_ID")))
+    print("GMAIL CLIENT SECRET LOADED:", bool(os.getenv("GOOGLE_CLIENT_SECRET")))
+
     flow = Flow.from_client_config(
         CLIENT_CONFIG,
         scopes=SCOPES
     )
 
     flow.redirect_uri = "http://localhost:5000/gmail/callback"
+
+    print("GMAIL REDIRECT URI:", flow.redirect_uri)
 
     return flow
 
