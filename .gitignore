@@ -5,3 +5,4 @@
 *.db
 *.exe
 __pycache__/
+gmail_token.json
