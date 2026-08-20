@@ -28,6 +28,7 @@ Locker Duty
 <div class="actions">
 
     <button
+        type="button"
         class="button"
         onclick="openAddDutyModal()">
 
@@ -69,7 +70,6 @@ Locker Duty
                     <td class="day">
                         {{ day }}
                     </td>
-
 
                     {% set day_duties = duties
                         | selectattr("week", "equalto", "A")
@@ -202,7 +202,6 @@ Locker Duty
                         {{ day }}
                     </td>
 
-
                     {% set day_duties = duties
                         | selectattr("week", "equalto", "B")
                         | selectattr("day", "equalto", day)
@@ -314,9 +313,25 @@ Locker Duty
 
         <h2>Add Locker Duty</h2>
 
+
+        <!-- ERROR MESSAGE -->
+
+        {% if error %}
+
+        <div class="form-error">
+            {{ error }}
+        </div>
+
+        {% endif %}
+
+
+        <!-- ADD DUTY FORM -->
+
         <form
             action="/add-locker-duty"
             method="POST">
+
+            <!-- PERSON -->
 
             <label>
                 Person
@@ -341,6 +356,8 @@ Locker Duty
             </select>
 
 
+            <!-- WEEK -->
+
             <label>
                 Week
             </label>
@@ -359,6 +376,8 @@ Locker Duty
 
             </select>
 
+
+            <!-- DAY -->
 
             <label>
                 Day
@@ -390,6 +409,8 @@ Locker Duty
 
             </select>
 
+
+            <!-- BUTTONS -->
 
             <div class="modal-actions">
 
