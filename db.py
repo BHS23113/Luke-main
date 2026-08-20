@@ -50,6 +50,16 @@ CREATE TABLE IF NOT EXISTS notice (
 )
 """)
 
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS reminder_log (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        duty_date TEXT NOT NULL,
+        sent_at TEXT NOT NULL,
+        UNIQUE(user_id, duty_date)
+    )
+""")
+
 
 # ==============================
 # NOTICE READ TABLE
