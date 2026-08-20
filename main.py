@@ -325,19 +325,28 @@ def send_tomorrow_reminders():
     if "user" not in session:
         return redirect(url_for("index"))
 
-    # Only admins can send reminder emails
     if session["user"]["role"] != "admin":
         return render_template("403.html"), 403
 
-    from datetime import datetime, timedelta
+    today = datetime.now()
 
-    # Get tomorrow's day
-    tomorrow = datetime.now() + timedelta(days=1)
-    tomorrow_day = tomorrow.strftime("%A")
+    # Find the next school day
+    if today.weekday() == 4:  # Friday
+        next_duty_date = today + timedelta(days=3)
 
-    # Work out which week we're currently in
-    # TODO: Replace this with your actual Week A/B calendar system later.
-    current_week = session.get("current_week", "A")
+    elif today.weekday() == 5:  # Saturday
+        next_duty_date = today + timedelta(days=2)
+
+    elif today.weekday() == 6:  # Sunday
+        next_duty_date = today + timedelta(days=1)
+
+    else:
+        # Monday → Thursday
+        next_duty_date = today + timedelta(days=1)
+
+    next_day = next_duty_date.strftime("%A")
+
+    next_week = get_school_week(next_duty_date)
 
     db = get_db()
     cursor = db.cursor()
@@ -353,7 +362,7 @@ def send_tomorrow_reminders():
             ON locker_duty.user_id = users.user_id
         WHERE locker_duty.week = ?
         AND locker_duty.day = ?
-    """, (current_week, tomorrow_day))
+    """, (next_week, next_day))
 
     assignments = cursor.fetchall()
 
@@ -361,9 +370,16 @@ def send_tomorrow_reminders():
 
     if not assignments:
         return f"""
-            <h1>No Locker Duty Tomorrow</h1>
-            <p>There are no assignments for {tomorrow_day}, Week {current_week}.</p>
-            <a href="/dashboard">Return to Dashboard</a>
+            <h1>No Locker Duty</h1>
+
+            <p>
+                No locker duty assignments were found for
+                {next_day}, Week {next_week}.
+            </p>
+
+            <a href="/dashboard">
+                Return to Dashboard
+            </a>
         """
 
     sent = []
@@ -391,11 +407,19 @@ PrefectConnect
 
     return f"""
         <h1>Reminder Emails Sent!</h1>
-        <p>Emails were sent to:</p>
+
+        <p>
+            Reminder emails were sent for
+            {next_day}, Week {next_week}.
+        </p>
+
         <ul>
             {''.join(f"<li>{name}</li>" for name in sent)}
         </ul>
-        <a href="/dashboard">Return to Dashboard</a>
+
+        <a href="/dashboard">
+            Return to Dashboard
+        </a>
     """
 
 @app.route("/login", methods=["POST"])
