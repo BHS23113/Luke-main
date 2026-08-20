@@ -11,6 +11,8 @@ from gmail import send_email
 
 from datetime import datetime, timedelta
 
+from apscheduler.schedulers.background import BackgroundScheduler
+
 # SCHOOL WEEK CONFIGURATION
 
 # The Monday that starts a known Week A.
