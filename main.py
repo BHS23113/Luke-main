@@ -9,6 +9,14 @@ from gmail import create_flow
 
 from gmail import send_email
 
+from datetime import datetime, timedelta
+
+# SCHOOL WEEK CONFIGURATION
+
+# The Monday that starts a known Week A.
+# Change this date if your school's Week A starts on a different Monday.
+WEEK_A_START = datetime(2026, 8, 10)
+
 print("Hello, World!")
 
 load_dotenv(override=True)
