@@ -42,7 +42,14 @@ def create_flow():
     return flow
 
 
+from email.utils import parseaddr
+
 def send_email(to_email, subject, body):
+
+    name, address = parseaddr(to_email)
+
+    if not address or "@" not in address:
+        raise ValueError(f"Invalid recipient email address: {to_email}")
 
     token_file = "gmail_token.json"
 
@@ -57,7 +64,6 @@ def send_email(to_email, subject, body):
     )
 
     if credentials.expired and credentials.refresh_token:
-
         credentials.refresh(Request())
 
         with open(token_file, "w") as token:
@@ -71,7 +77,7 @@ def send_email(to_email, subject, body):
 
     message = EmailMessage()
 
-    message["To"] = to_email
+    message["To"] = address
     message["Subject"] = subject
 
     message.set_content(body)
