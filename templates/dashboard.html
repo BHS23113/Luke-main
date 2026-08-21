@@ -19,7 +19,14 @@ Dashboard
 
     <div class="card">
         <h3>Locker Duty</h3>
-        <p>Next duty: Tomorrow</p>
+
+        {% if next_duty %}
+            <p>Next duty: {{ next_duty.day }}</p>
+            <p>Week {{ next_duty.week }}</p>
+            <p>{{ next_duty.date }}</p>
+        {% else %}
+            <p>No upcoming locker duty.</p>
+        {% endif %}
     </div>
 
     <div class="card">
