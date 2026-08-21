@@ -1,50 +1,50 @@
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for
-from google.oauth2 import id_token
-from google.auth.transport import requests as grequests
-from dotenv import load_dotenv
-import sqlite3
 import os
-
-from gmail import create_flow
-from gmail import send_email
-
+import sqlite3
 from datetime import datetime, timedelta
 
 from apscheduler.schedulers.background import BackgroundScheduler
+from dotenv import load_dotenv
+from flask import (
+    Flask,
+    jsonify,
+    redirect,
+    render_template,
+    request,
+    session,
+    url_for,
+)
+from google.auth.transport import requests as grequests
+from google.oauth2 import id_token
+
+from gmail import create_flow, send_email
 
 
-# ==============================
-# SCHOOL WEEK CONFIGURATION
-# ==============================
-
-# The Monday that begins a known Week A.
-# This is used to automatically determine whether a date is Week A or Week B.
+# School week configuration.
+# The Monday that starts a known Week A.
 WEEK_A_START = datetime(2026, 8, 10)
 
-
-# ==============================
-# APPLICATION CONFIGURATION
-# ==============================
-
+# Load environment variables from the .env file.
 load_dotenv(override=True)
 
 DATABASE = "prefectconnect.db"
 
 
-# Connects to the SQLite database and allows rows to be accessed by column name.
 def get_db():
+    """Connect to the PrefectConnect SQLite database."""
+
     conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row
+
     return conn
 
 
-# Determines whether a given date falls within Week A or Week B.
 def get_school_week(date):
+    """Return whether the given date falls in Week A or Week B."""
 
     # Find the Monday of the week containing this date.
     monday = date - timedelta(days=date.weekday())
 
-    # Calculate how many weeks have passed since the starting Week A.
+    # Calculate how many weeks have passed since Week A started.
     weeks_since_start = (
         monday.date() - WEEK_A_START.date()
     ).days // 7
@@ -57,35 +57,27 @@ def get_school_week(date):
 
 
 app = Flask(__name__)
-
-# Secret key is used by Flask to securely manage sessions.
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 
 GOOGLE_CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
 
 
-# ==============================
-# HOME PAGE
-# ==============================
-
 @app.route("/")
 def index():
+    """Display the login page."""
 
     user = session.get("user")
 
     return render_template(
         "index.html",
         user=user,
-        client_id=GOOGLE_CLIENT_ID
+        client_id=GOOGLE_CLIENT_ID,
     )
 
 
-# ==============================
-# DASHBOARD
-# ==============================
-
 @app.route("/dashboard")
 def dashboard():
+    """Display the dashboard and the user's next locker duty."""
 
     if "user" not in session:
         return redirect(url_for("index"))
@@ -95,13 +87,9 @@ def dashboard():
 
     user_id = session["user"]["user_id"]
 
-
-    # ==============================
-    # COUNT UNREAD NOTICES
-    # ==============================
-
-    # Count active notices that the current user has not read yet.
-    cursor.execute("""
+    # Count active notices that this user has not read.
+    cursor.execute(
+        """
         SELECT COUNT(*)
         FROM notice
         WHERE notice.is_active = 1
@@ -110,32 +98,29 @@ def dashboard():
             FROM notice_read
             WHERE user_id = ?
         )
-    """, (user_id,))
+        """,
+        (user_id,),
+    )
 
     notice_count = cursor.fetchone()[0]
 
-
-    # ==============================
-    # FIND NEXT LOCKER DUTY
-    # ==============================
-
+    # Find the user's next locker duty.
     today = datetime.now()
-
     next_duty = None
 
-    # Check the next 14 days to find the user's next assigned duty.
-    for days_ahead in range(0, 14):
-
+    # Check the next 14 days.
+    for days_ahead in range(14):
         check_date = today + timedelta(days=days_ahead)
 
-        # Skip Saturday and Sunday.
+        # Skip weekends.
         if check_date.weekday() >= 5:
             continue
 
         check_day = check_date.strftime("%A")
         check_week = get_school_week(check_date)
 
-        cursor.execute("""
+        cursor.execute(
+            """
             SELECT
                 locker_duty.day,
                 locker_duty.week
@@ -143,20 +128,21 @@ def dashboard():
             WHERE locker_duty.user_id = ?
             AND locker_duty.day = ?
             AND locker_duty.week = ?
-        """, (
-            user_id,
-            check_day,
-            check_week
-        ))
+            """,
+            (
+                user_id,
+                check_day,
+                check_week,
+            ),
+        )
 
         duty = cursor.fetchone()
 
-        # Stop searching once the next duty is found.
-        if duty:
+        if duty is not None:
             next_duty = {
                 "day": duty["day"],
                 "week": duty["week"],
-                "date": check_date.strftime("%d %B %Y")
+                "date": check_date.strftime("%d %B %Y"),
             }
 
             break
@@ -167,16 +153,13 @@ def dashboard():
         "dashboard.html",
         user=session["user"],
         notice_count=notice_count,
-        next_duty=next_duty
+        next_duty=next_duty,
     )
 
 
-# ==============================
-# LOCKER DUTY
-# ==============================
-
 @app.route("/locker-duty")
 def locker_duty():
+    """Display the locker duty roster."""
 
     if "user" not in session:
         return redirect(url_for("index"))
@@ -184,8 +167,9 @@ def locker_duty():
     db = get_db()
     cursor = db.cursor()
 
-    # Retrieve all locker duty assignments.
-    cursor.execute("""
+    # Get locker duty assignments.
+    cursor.execute(
+        """
         SELECT
             locker_duty.duty_id,
             locker_duty.user_id,
@@ -204,17 +188,20 @@ def locker_duty():
                 WHEN 'Thursday' THEN 4
                 WHEN 'Friday' THEN 5
             END
-    """)
+        """
+    )
 
     duties = cursor.fetchall()
 
-    # Retrieve active users for the Add Person dropdown.
-    cursor.execute("""
+    # Get active users for the Add Person dropdown.
+    cursor.execute(
+        """
         SELECT user_id, name
         FROM users
         WHERE is_active = 1
         ORDER BY name
-    """)
+        """
+    )
 
     users = cursor.fetchall()
 
@@ -224,21 +211,18 @@ def locker_duty():
         "locker_duty.html",
         user=session["user"],
         duties=duties,
-        users=users
+        users=users,
     )
 
 
-# ==============================
-# ADD LOCKER DUTY
-# ==============================
-
 @app.route("/add-locker-duty", methods=["POST"])
 def add_locker_duty():
+    """Add a person to the locker duty roster."""
 
     if "user" not in session:
         return redirect(url_for("index"))
 
-    # Only administrators can modify the locker duty roster.
+    # Only admins can modify the roster.
     if session["user"]["role"] != "admin":
         return render_template("403.html"), 403
 
@@ -249,9 +233,9 @@ def add_locker_duty():
     db = get_db()
     cursor = db.cursor()
 
-
-    # Check whether this person is already assigned to the selected day.
-    cursor.execute("""
+    # Check if this person is already assigned to this day.
+    cursor.execute(
+        """
         SELECT users.name
         FROM locker_duty
         JOIN users
@@ -259,16 +243,24 @@ def add_locker_duty():
         WHERE locker_duty.user_id = ?
         AND locker_duty.week = ?
         AND locker_duty.day = ?
-    """, (user_id, week, day))
+        """,
+        (
+            user_id,
+            week,
+            day,
+        ),
+    )
 
     existing_duty = cursor.fetchone()
 
     if existing_duty:
+        error = (
+            f"{existing_duty['name']} is already assigned to "
+            f"{day}, Week {week}."
+        )
 
-        error = f"{existing_duty['name']} is already assigned to {day}, Week {week}."
-
-        # Reload the current roster so it can be displayed with the error.
-        cursor.execute("""
+        cursor.execute(
+            """
             SELECT
                 locker_duty.duty_id,
                 locker_duty.user_id,
@@ -287,16 +279,19 @@ def add_locker_duty():
                     WHEN 'Thursday' THEN 4
                     WHEN 'Friday' THEN 5
                 END
-        """)
+            """
+        )
 
         duties = cursor.fetchall()
 
-        cursor.execute("""
+        cursor.execute(
+            """
             SELECT user_id, name
             FROM users
             WHERE is_active = 1
             ORDER BY name
-        """)
+            """
+        )
 
         users = cursor.fetchall()
 
@@ -307,25 +302,31 @@ def add_locker_duty():
             user=session["user"],
             duties=duties,
             users=users,
-            error=error
+            error=error,
         )
 
-
-    # Check whether the selected day already has two people assigned.
-    cursor.execute("""
+    # Check if the day already has two people.
+    cursor.execute(
+        """
         SELECT COUNT(*)
         FROM locker_duty
         WHERE week = ? AND day = ?
-    """, (week, day))
+        """,
+        (
+            week,
+            day,
+        ),
+    )
 
     count = cursor.fetchone()[0]
 
     if count >= 2:
+        error = (
+            f"{day}, Week {week} already has two people assigned."
+        )
 
-        error = f"{day}, Week {week} already has two people assigned."
-
-        # Reload the roster so the error can be displayed on the page.
-        cursor.execute("""
+        cursor.execute(
+            """
             SELECT
                 locker_duty.duty_id,
                 locker_duty.user_id,
@@ -344,16 +345,19 @@ def add_locker_duty():
                     WHEN 'Thursday' THEN 4
                     WHEN 'Friday' THEN 5
                 END
-        """)
+            """
+        )
 
         duties = cursor.fetchall()
 
-        cursor.execute("""
+        cursor.execute(
+            """
             SELECT user_id, name
             FROM users
             WHERE is_active = 1
             ORDER BY name
-        """)
+            """
+        )
 
         users = cursor.fetchall()
 
@@ -364,15 +368,21 @@ def add_locker_duty():
             user=session["user"],
             duties=duties,
             users=users,
-            error=error
+            error=error,
         )
 
-
-    # Add the new assignment to the database.
-    cursor.execute("""
+    # Add the new duty.
+    cursor.execute(
+        """
         INSERT INTO locker_duty (user_id, week, day)
         VALUES (?, ?, ?)
-    """, (user_id, week, day))
+        """,
+        (
+            user_id,
+            week,
+            day,
+        ),
+    )
 
     db.commit()
     db.close()
@@ -380,27 +390,27 @@ def add_locker_duty():
     return redirect(url_for("locker_duty"))
 
 
-# ==============================
-# DELETE LOCKER DUTY
-# ==============================
-
 @app.route("/delete-locker-duty/<int:duty_id>", methods=["POST"])
 def delete_locker_duty(duty_id):
+    """Remove a person from the locker duty roster."""
 
     if "user" not in session:
         return redirect(url_for("index"))
 
-    # Only administrators can remove assignments.
+    # Only admins can remove people.
     if session["user"]["role"] != "admin":
         return render_template("403.html"), 403
 
     db = get_db()
     cursor = db.cursor()
 
-    cursor.execute("""
+    cursor.execute(
+        """
         DELETE FROM locker_duty
         WHERE duty_id = ?
-    """, (duty_id,))
+        """,
+        (duty_id,),
+    )
 
     db.commit()
     db.close()
@@ -408,28 +418,20 @@ def delete_locker_duty(duty_id):
     return redirect(url_for("locker_duty"))
 
 
-# ==============================
-# LOCKER DUTY EMAIL REMINDERS
-# ==============================
-
 def send_locker_duty_reminders():
+    """Send reminders to users with duty on the next school day."""
 
     today = datetime.now()
 
-
-    # Determine the next school day.
-    if today.weekday() == 4:       # Friday
+    # Find the next school day.
+    if today.weekday() == 4:
         next_duty_date = today + timedelta(days=3)
-
-    elif today.weekday() == 5:     # Saturday
+    elif today.weekday() == 5:
         next_duty_date = today + timedelta(days=2)
-
-    elif today.weekday() == 6:     # Sunday
+    elif today.weekday() == 6:
         next_duty_date = today + timedelta(days=1)
-
-    else:                          # Monday - Thursday
+    else:
         next_duty_date = today + timedelta(days=1)
-
 
     next_day = next_duty_date.strftime("%A")
     next_week = get_school_week(next_duty_date)
@@ -437,9 +439,8 @@ def send_locker_duty_reminders():
     db = get_db()
     cursor = db.cursor()
 
-
-    # Find everyone assigned to the next school day's locker duty.
-    cursor.execute("""
+    cursor.execute(
+        """
         SELECT
             users.user_id,
             users.name,
@@ -451,12 +452,15 @@ def send_locker_duty_reminders():
             ON locker_duty.user_id = users.user_id
         WHERE locker_duty.week = ?
         AND locker_duty.day = ?
-    """, (next_week, next_day))
+        """,
+        (
+            next_week,
+            next_day,
+        ),
+    )
 
     assignments = cursor.fetchall()
 
-
-    # Stop if nobody is assigned to the next school day.
     if not assignments:
         db.close()
 
@@ -467,36 +471,32 @@ def send_locker_duty_reminders():
 
         return
 
-
     for assignment in assignments:
-
         duty_date = next_duty_date.strftime("%Y-%m-%d")
 
-
-        # Check whether a reminder has already been sent for this duty date.
-        cursor.execute("""
+        cursor.execute(
+            """
             SELECT id
             FROM reminder_log
             WHERE user_id = ?
             AND duty_date = ?
-        """, (
-            assignment["user_id"],
-            duty_date
-        ))
+            """,
+            (
+                assignment["user_id"],
+                duty_date,
+            ),
+        )
 
         already_sent = cursor.fetchone()
 
-
-        # Prevent duplicate reminder emails.
         if already_sent:
             print(
                 f"Reminder already sent to "
                 f"{assignment['name']} for {duty_date}"
             )
+
             continue
 
-
-        # Send the reminder email.
         send_email(
             assignment["email"],
             "PrefectConnect - Locker Duty Reminder",
@@ -511,23 +511,24 @@ Please remember to attend your locker duty.
 
 Thanks,
 PrefectConnect
-"""
+""",
         )
 
-
-        # Record that the reminder has been sent.
-        cursor.execute("""
+        cursor.execute(
+            """
             INSERT INTO reminder_log (
                 user_id,
                 duty_date,
                 sent_at
             )
             VALUES (?, ?, ?)
-        """, (
-            assignment["user_id"],
-            duty_date,
-            datetime.now().isoformat()
-        ))
+            """,
+            (
+                assignment["user_id"],
+                duty_date,
+                datetime.now().isoformat(),
+            ),
+        )
 
         db.commit()
 
@@ -539,17 +540,13 @@ PrefectConnect
     db.close()
 
 
-# ==============================
-# MANUAL REMINDER TEST
-# ==============================
-
 @app.route("/send-tomorrow-reminders")
 def send_tomorrow_reminders():
+    """Manually run the locker duty reminder system."""
 
     if "user" not in session:
         return redirect(url_for("index"))
 
-    # Only administrators can manually run the reminder system.
     if session["user"]["role"] != "admin":
         return render_template("403.html"), 403
 
@@ -568,86 +565,78 @@ def send_tomorrow_reminders():
     """
 
 
-# ==============================
-# GOOGLE LOGIN
-# ==============================
-
 @app.route("/login", methods=["POST"])
 def login():
+    """Authenticate a user using Google OAuth."""
 
     token = request.json.get("credential")
 
     try:
-
-        # Verify the Google login token.
         idinfo = id_token.verify_oauth2_token(
             token,
             grequests.Request(),
-            GOOGLE_CLIENT_ID
+            GOOGLE_CLIENT_ID,
         )
 
-        google_id = idinfo["sub"]
         email = idinfo["email"]
-        name = idinfo.get("name")
 
         db = get_db()
         cursor = db.cursor()
 
-
-        # Check whether the Google account exists in PrefectConnect.
+        # Check if the user exists in the database.
         cursor.execute(
-            "SELECT * FROM users WHERE email=?",
-            (email,)
+            "SELECT * FROM users WHERE email = ?",
+            (email,),
         )
 
         user = cursor.fetchone()
 
-
-        # Deny access if the account is not registered.
+        # Deny access if the email is not registered.
         if user is None:
             db.close()
 
-            return jsonify({
-                "status": "error",
-                "redirect": "/403"
-            }), 403
+            return jsonify(
+                {
+                    "status": "error",
+                    "redirect": "/403",
+                }
+            ), 403
 
-
-        # Store the user's information in the Flask session.
+        # Store the database user in the session.
         session["user"] = {
             "user_id": user["user_id"],
             "email": user["email"],
             "name": user["name"],
-            "role": user["role"]
+            "role": user["role"],
         }
 
         db.close()
 
-        return jsonify({
-            "status": "success",
-            "redirect": "/dashboard"
-        })
+        return jsonify(
+            {
+                "status": "success",
+                "redirect": "/dashboard",
+            }
+        )
+
+    except Exception as error:
+        return jsonify(
+            {
+                "status": "error",
+                "message": str(error),
+            }
+        ), 401
 
 
-    except Exception as e:
-
-        return jsonify({
-            "status": "error",
-            "message": str(e)
-        }), 401
-
-
-# ==============================
-# GMAIL AUTHORISATION
-# ==============================
+# Gmail authorisation.
 
 @app.route("/gmail/authorize")
 def gmail_authorize():
+    """Start the Gmail OAuth authorisation process."""
 
     if "user" not in session:
         return redirect(url_for("index"))
 
-    # Only administrators can connect Gmail.
     if session["user"]["role"] != "admin":
         return render_template("403.html"), 403
 
@@ -655,11 +644,10 @@ def gmail_authorize():
 
     authorization_url, state = flow.authorization_url(
         access_type="offline",
-        prompt="consent"
+        prompt="consent",
     )
 
-
-    # Store OAuth information so the callback can restore the flow.
+    # Save OAuth information for the callback.
     session["gmail_state"] = state
     session["gmail_code_verifier"] = flow.code_verifier
 
@@ -668,6 +656,7 @@ def gmail_authorize():
 
 @app.route("/gmail/callback")
 def gmail_callback():
+    """Handle the Gmail OAuth callback."""
 
     if "user" not in session:
         return redirect(url_for("index"))
@@ -686,13 +675,10 @@ def gmail_callback():
 
     credentials = flow.credentials
 
-
-    # Save the Gmail credentials so the app can send emails later.
     with open("gmail_token.json", "w") as token:
         token.write(credentials.to_json())
 
-
-    # Remove temporary OAuth information from the session.
+    # Remove temporary OAuth data.
     session.pop("gmail_state", None)
     session.pop("gmail_code_verifier", None)
 
@@ -703,28 +689,22 @@ def gmail_callback():
     """
 
 
-# ==============================
-# ASSEMBLIES
-# ==============================
-
 @app.route("/assemblies")
 def assemblies():
+    """Display the assemblies page."""
 
     if "user" not in session:
         return redirect(url_for("index"))
 
     return render_template(
         "assembly.html",
-        user=session["user"]
+        user=session["user"],
     )
 
 
-# ==============================
-# NOTICES
-# ==============================
-
 @app.route("/notices")
 def notices():
+    """Display active notices and mark them as read."""
 
     if "user" not in session:
         return redirect(url_for("index"))
@@ -732,9 +712,9 @@ def notices():
     db = get_db()
     cursor = db.cursor()
 
-
-    # Retrieve all active notices.
-    cursor.execute("""
+    # Get all active notices.
+    cursor.execute(
+        """
         SELECT
             notice.notice_id,
             notice.title,
@@ -746,23 +726,26 @@ def notices():
             ON notice.created_by = users.user_id
         WHERE notice.is_active = 1
         ORDER BY notice.created_at DESC
-    """)
+        """
+    )
 
     notices = cursor.fetchall()
 
-
-    # Get the current user's ID.
     user_id = session["user"]["user_id"]
 
-
-    # Mark each active notice as read for this user.
+    # Mark all active notices as read for this user.
     for notice in notices:
-
-        cursor.execute("""
+        cursor.execute(
+            """
             INSERT OR IGNORE INTO notice_read
             (notice_id, user_id)
             VALUES (?, ?)
-        """, (notice["notice_id"], user_id))
+            """,
+            (
+                notice["notice_id"],
+                user_id,
+            ),
+        )
 
     db.commit()
     db.close()
@@ -770,12 +753,13 @@ def notices():
     return render_template(
         "notices.html",
         user=session["user"],
-        notices=notices
+        notices=notices,
     )
 
 
 @app.route("/add-notice", methods=["POST"])
 def add_notice():
+    """Create a new notice."""
 
     if "user" not in session:
         return redirect(url_for("index"))
@@ -786,15 +770,11 @@ def add_notice():
     title = request.form["title"].strip()
     content = request.form["content"].strip()
 
-
-    # Limit the length of notices.
     if len(title) > 50 or len(content) > 500:
         return redirect(url_for("notices"))
 
-    # Limit the number of lines in a notice.
     if content.count("\n") >= 8:
         return redirect(url_for("notices"))
-
 
     user_id = session["user"]["user_id"]
 
@@ -806,7 +786,11 @@ def add_notice():
         INSERT INTO notice (title, content, created_by)
         VALUES (?, ?, ?)
         """,
-        (title, content, user_id)
+        (
+            title,
+            content,
+            user_id,
+        ),
     )
 
     db.commit()
@@ -817,6 +801,7 @@ def add_notice():
 
 @app.route("/delete-notice/<int:notice_id>", methods=["POST"])
 def delete_notice(notice_id):
+    """Deactivate a notice."""
 
     if "user" not in session:
         return redirect(url_for("index"))
@@ -827,14 +812,13 @@ def delete_notice(notice_id):
     db = get_db()
     cursor = db.cursor()
 
-    # Soft-delete the notice by making it inactive.
     cursor.execute(
         """
         UPDATE notice
         SET is_active = 0
         WHERE notice_id = ?
         """,
-        (notice_id,)
+        (notice_id,),
     )
 
     db.commit()
@@ -843,12 +827,9 @@ def delete_notice(notice_id):
     return redirect(url_for("notices"))
 
 
-# ==============================
-# USER MANAGEMENT
-# ==============================
-
 @app.route("/users")
 def users():
+    """Display the user management page."""
 
     if "user" not in session:
         return redirect(url_for("index"))
@@ -859,12 +840,13 @@ def users():
     db = get_db()
     cursor = db.cursor()
 
-    # Retrieve all registered users.
-    cursor.execute("""
+    cursor.execute(
+        """
         SELECT *
         FROM users
         ORDER BY name
-    """)
+        """
+    )
 
     users = cursor.fetchall()
 
@@ -873,12 +855,13 @@ def users():
     return render_template(
         "users.html",
         user=session["user"],
-        users=users
+        users=users,
     )
 
 
 @app.route("/delete-user/<int:user_id>", methods=["POST"])
 def delete_user(user_id):
+    """Delete a user unless they are the current administrator."""
 
     if "user" not in session:
         return redirect(url_for("index"))
@@ -886,20 +869,20 @@ def delete_user(user_id):
     if session["user"]["role"] != "admin":
         return render_template("403.html"), 403
 
-
-    # Prevent administrators from deleting their own account.
+    # Prevent an admin from deleting their own account.
     if user_id == session["user"]["user_id"]:
-
         error = "You cannot delete your own account."
 
         db = get_db()
         cursor = db.cursor()
 
-        cursor.execute("""
+        cursor.execute(
+            """
             SELECT *
             FROM users
             ORDER BY name
-        """)
+            """
+        )
 
         users = cursor.fetchall()
 
@@ -909,16 +892,18 @@ def delete_user(user_id):
             "users.html",
             user=session["user"],
             users=users,
-            error=error
+            error=error,
         )
-
 
     db = get_db()
     cursor = db.cursor()
 
     cursor.execute(
-        "DELETE FROM users WHERE user_id = ?",
-        (user_id,)
+        """
+        DELETE FROM users
+        WHERE user_id = ?
+        """,
+        (user_id,),
     )
 
     db.commit()
@@ -929,6 +914,7 @@ def delete_user(user_id):
 
 @app.route("/add-user", methods=["POST"])
 def add_user():
+    """Add a new user to PrefectConnect."""
 
     if "user" not in session:
         return redirect(url_for("index"))
@@ -943,11 +929,10 @@ def add_user():
     db = get_db()
     cursor = db.cursor()
 
-
-    # Prevent duplicate accounts from being created.
+    # Check if the email already exists.
     cursor.execute(
-        "SELECT * FROM users WHERE email=?",
-        (email,)
+        "SELECT * FROM users WHERE email = ?",
+        (email,),
     )
 
     existing_user = cursor.fetchone()
@@ -956,14 +941,17 @@ def add_user():
         db.close()
         return redirect(url_for("users"))
 
-
-    # Add the new user to the database.
+    # Add the new user.
     cursor.execute(
         """
         INSERT INTO users (name, email, role)
         VALUES (?, ?, ?)
         """,
-        (name, email, role)
+        (
+            name,
+            email,
+            role,
+        ),
     )
 
     db.commit()
@@ -974,6 +962,7 @@ def add_user():
 
 @app.route("/edit-role/<int:user_id>", methods=["POST"])
 def edit_role(user_id):
+    """Change a user's role unless the current admin is being demoted."""
 
     if "user" not in session:
         return redirect(url_for("index"))
@@ -983,20 +972,20 @@ def edit_role(user_id):
 
     role = request.form["role"]
 
-
-    # Prevent administrators from removing their own admin privileges.
+    # Prevent an admin from removing their own admin privileges.
     if user_id == session["user"]["user_id"] and role != "admin":
-
         error = "You cannot remove your own admin privileges."
 
         db = get_db()
         cursor = db.cursor()
 
-        cursor.execute("""
+        cursor.execute(
+            """
             SELECT *
             FROM users
             ORDER BY name
-        """)
+            """
+        )
 
         users = cursor.fetchall()
 
@@ -1006,9 +995,8 @@ def edit_role(user_id):
             "users.html",
             user=session["user"],
             users=users,
-            error=error
+            error=error,
         )
-
 
     db = get_db()
     cursor = db.cursor()
@@ -1019,7 +1007,10 @@ def edit_role(user_id):
         SET role = ?
         WHERE user_id = ?
         """,
-        (role, user_id)
+        (
+            role,
+            user_id,
+        ),
     )
 
     db.commit()
@@ -1028,39 +1019,32 @@ def edit_role(user_id):
     return redirect(url_for("users"))
 
 
-# ==============================
-# ERROR / LOGOUT
-# ==============================
-
 @app.route("/403")
 def forbidden():
+    """Display the access denied page."""
 
     return render_template("403.html"), 403
 
 
 @app.route("/logout")
 def logout():
+    """Log the current user out."""
 
     session.clear()
 
     return redirect(url_for("index"))
 
 
-# ==============================
-# START APPLICATION
-# ==============================
-
 if __name__ == "__main__":
-
     scheduler = BackgroundScheduler()
 
-    # Automatically run the locker duty reminder at 4:00 PM Monday-Friday.
+    # Run locker duty reminders automatically at 4:00 PM Monday-Friday.
     scheduler.add_job(
         send_locker_duty_reminders,
         "cron",
         day_of_week="mon-fri",
         hour=16,
-        minute=0
+        minute=0,
     )
 
     scheduler.start()
@@ -1068,5 +1052,5 @@ if __name__ == "__main__":
     # Start the Flask development server.
     app.run(
         debug=True,
-        use_reloader=False
+        use_reloader=False,
     )
