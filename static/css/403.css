@@ -19,7 +19,9 @@ body {
 
 /* ERROR CARD */
 .error-card {
-    width: 650px;
+    width: 90%;
+    max-width: 650px;
+
     background-color: #003d52;
     color: white;
 
@@ -28,7 +30,7 @@ body {
 
     text-align: center;
 
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
 /* ERROR NUMBER */
@@ -50,11 +52,18 @@ body {
     margin-bottom: 20px;
 }
 
+/* BUTTON CONTAINER */
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
 /* BUTTON */
 .button {
     display: inline-block;
 
-    margin-top: 20px;
     padding: 12px 28px;
 
     background-color: white;
@@ -68,7 +77,21 @@ body {
     transition: 0.2s;
 }
 
+/* SECONDARY BUTTON */
+.button.secondary {
+    background-color: transparent;
+    color: white;
+    border: 2px solid white;
+}
+
 /* BUTTON HOVER */
 .button:hover {
     background-color: #e5e5e5;
+    color: #003d52;
+}
+
+/* SECONDARY BUTTON HOVER */
+.button.secondary:hover {
+    background-color: white;
+    color: #003d52;
 }
