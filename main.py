@@ -858,7 +858,16 @@ def edit_role(user_id):
 
     # Prevent an admin from removing their own admin role
     if user_id == session["user"]["user_id"] and role != "admin":
-        return redirect(url_for("users"))
+        error = "You cannot remove your own admin privileges."
+
+        db.close()
+
+        return render_template(
+            "users.html",
+            user=session["user"],
+            users=users,
+            error=error
+        )
 
     db = get_db()
     cursor = db.cursor()
