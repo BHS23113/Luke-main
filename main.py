@@ -781,17 +781,6 @@ def delete_user(user_id):
     if user_id == session["user"]["user_id"]:
         error = "You cannot delete your own account."
 
-        db = get_db()
-        cursor = db.cursor()
-
-        cursor.execute("""
-            SELECT *
-            FROM users
-            ORDER BY name
-        """)
-
-        users = cursor.fetchall()
-
         db.close()
 
         return render_template(
