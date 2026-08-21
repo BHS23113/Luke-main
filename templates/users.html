@@ -21,6 +21,12 @@ Users
     </button>
 </div>
 
+{% if error %}
+<div class="error-message">
+    {{ error }}
+</div>
+{% endif %}
+
 <div class="table-card">
 
     <table>
@@ -80,7 +86,7 @@ Users
 </div>
 
 
-<!--DELETE MODAL-->
+<!-- DELETE MODAL -->
 
 <div id="deleteModal" class="modal">
 
@@ -124,7 +130,7 @@ Users
 </div>
 
 
-<!--ADD USER MODAL-->
+<!-- ADD USER MODAL -->
 
 <div id="addUserModal" class="modal">
 
@@ -195,7 +201,7 @@ Users
 </div>
 
 
-<!--EDIT ROLE MODAL-->
+<!-- EDIT ROLE MODAL -->
 
 <div id="roleModal" class="modal">
 
