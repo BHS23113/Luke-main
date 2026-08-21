@@ -847,6 +847,10 @@ def edit_role(user_id):
 
     role = request.form["role"]
 
+    # Prevent an admin from removing their own admin role
+    if user_id == session["user"]["user_id"] and role != "admin":
+        return redirect(url_for("users"))
+
     db = get_db()
     cursor = db.cursor()
 
@@ -862,7 +866,7 @@ def edit_role(user_id):
     db.commit()
     db.close()
 
-    return redirect(url_for("users")) 
+    return redirect(url_for("users"))
 
 
 @app.route("/403")
