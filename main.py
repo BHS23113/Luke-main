@@ -779,7 +779,27 @@ def delete_user(user_id):
 
     # Prevent an admin from deleting themselves
     if user_id == session["user"]["user_id"]:
-        return redirect(url_for("users"))
+        error = "You cannot delete your own account."
+
+        db = get_db()
+        cursor = db.cursor()
+
+        cursor.execute("""
+            SELECT *
+            FROM users
+            ORDER BY name
+        """)
+
+        users = cursor.fetchall()
+
+        db.close()
+
+        return render_template(
+            "users.html",
+            user=session["user"],
+            users=users,
+            error=error
+        )
 
     db = get_db()
     cursor = db.cursor()
