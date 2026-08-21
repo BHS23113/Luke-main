@@ -78,7 +78,8 @@ def dashboard():
 
     user_id = session["user"]["user_id"]
 
-    # Count active notices this user has NOT read
+    # COUNT UNREAD NOTICES
+
     cursor.execute("""
         SELECT COUNT(*)
         FROM notice
@@ -92,12 +93,57 @@ def dashboard():
 
     notice_count = cursor.fetchone()[0]
 
+    # FIND NEXT LOCKER DUTY
+
+    today = datetime.now()
+
+    next_duty = None
+
+    # Check the next 14 days.
+    # This covers the current and following school week.
+    for days_ahead in range(0, 14):
+
+        check_date = today + timedelta(days=days_ahead)
+
+        # Skip weekends
+        if check_date.weekday() >= 5:
+            continue
+
+        check_day = check_date.strftime("%A")
+        check_week = get_school_week(check_date)
+
+        cursor.execute("""
+            SELECT
+                locker_duty.day,
+                locker_duty.week
+            FROM locker_duty
+            WHERE locker_duty.user_id = ?
+            AND locker_duty.day = ?
+            AND locker_duty.week = ?
+        """, (
+            user_id,
+            check_day,
+            check_week
+        ))
+
+        duty = cursor.fetchone()
+
+        if duty:
+            next_duty = {
+                "day": duty["day"],
+                "week": duty["week"],
+                "date": check_date.strftime("%d %B %Y")
+            }
+
+            break
+
     db.close()
 
     return render_template(
         "dashboard.html",
         user=session["user"],
-        notice_count=notice_count
+        notice_count=notice_count,
+        next_duty=next_duty
     )
 
 @app.route("/locker-duty")
