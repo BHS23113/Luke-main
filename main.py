@@ -868,13 +868,13 @@ def edit_role(user_id):
 
     role = request.form["role"]
 
-    db = get_db()
-    cursor = db.cursor()
-
-    # Prevent an admin from removing their own admin role
+    # Prevent an admin from removing their own admin privileges
     if user_id == session["user"]["user_id"] and role != "admin":
 
         error = "You cannot remove your own admin privileges."
+
+        db = get_db()
+        cursor = db.cursor()
 
         cursor.execute("""
             SELECT *
@@ -892,6 +892,9 @@ def edit_role(user_id):
             users=users,
             error=error
         )
+
+    db = get_db()
+    cursor = db.cursor()
 
     cursor.execute(
         """
