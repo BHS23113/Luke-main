@@ -779,7 +779,19 @@ def delete_user(user_id):
 
     # Prevent an admin from deleting themselves
     if user_id == session["user"]["user_id"]:
+
         error = "You cannot delete your own account."
+
+        db = get_db()
+        cursor = db.cursor()
+
+        cursor.execute("""
+            SELECT *
+            FROM users
+            ORDER BY name
+        """)
+
+        users = cursor.fetchall()
 
         db.close()
 
@@ -856,12 +868,13 @@ def edit_role(user_id):
 
     role = request.form["role"]
 
+    db = get_db()
+    cursor = db.cursor()
+
     # Prevent an admin from removing their own admin role
     if user_id == session["user"]["user_id"] and role != "admin":
-        error = "You cannot remove your own admin privileges."
 
-        db = get_db()
-        cursor = db.cursor()
+        error = "You cannot remove your own admin privileges."
 
         cursor.execute("""
             SELECT *
@@ -879,9 +892,6 @@ def edit_role(user_id):
             users=users,
             error=error
         )
-
-    db = get_db()
-    cursor = db.cursor()
 
     cursor.execute(
         """
