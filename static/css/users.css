@@ -207,3 +207,11 @@ td button:hover {
     background: #1d4ed8;
 
 }
+
+.error-message {
+    background-color: #ffe5e5;
+    color: #b00020;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
