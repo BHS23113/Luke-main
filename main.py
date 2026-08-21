@@ -860,6 +860,17 @@ def edit_role(user_id):
     if user_id == session["user"]["user_id"] and role != "admin":
         error = "You cannot remove your own admin privileges."
 
+        db = get_db()
+        cursor = db.cursor()
+
+        cursor.execute("""
+            SELECT *
+            FROM users
+            ORDER BY name
+        """)
+
+        users = cursor.fetchall()
+
         db.close()
 
         return render_template(
@@ -885,7 +896,6 @@ def edit_role(user_id):
     db.close()
 
     return redirect(url_for("users"))
-
 
 @app.route("/403")
 def forbidden():
