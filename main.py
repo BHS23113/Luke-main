@@ -620,6 +620,8 @@ def login():
         )
 
     except Exception as error:
+        print("LOGIN ERROR:", error)
+
         return jsonify(
             {
                 "status": "error",
